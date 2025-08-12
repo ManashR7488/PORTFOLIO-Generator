@@ -826,6 +826,7 @@ body {
 
 /* Skills List */
 .skill-tag {
+    height: fit-content;
     display: inline-flex;
     align-items: center;
     gap: 8px;

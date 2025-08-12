@@ -499,7 +499,7 @@ function displaySkill(skillObj) {
     if (!skillsList) return;
     
     const skillTag = document.createElement('div');
-    skillTag.className = 'skill-tag';
+    skillTag.className = 'skill-tag ';
     skillTag.innerHTML = `
         <span>${skillObj.skill}</span>
         <span class="skill-level">${skillObj.level}</span>
@@ -509,7 +509,7 @@ function displaySkill(skillObj) {
     skillsList.appendChild(skillTag);
     
     gsap.from(skillTag, {
-        opacity: 0,
+        // opacity: 1,
         scale: 0.8,
         duration: 0.3,
         ease: 'back.out(1.7)'
@@ -567,7 +567,7 @@ function displayEducation(eduObj) {
     eduList.appendChild(eduItem);
     
     gsap.from(eduItem, {
-        opacity: 0,
+        // opacity: 1,
         y: 20,
         duration: 0.3,
         ease: 'power2.out'
@@ -640,7 +640,7 @@ function displayProject(projectObj) {
     projectsList.appendChild(projectItem);
     
     gsap.from(projectItem, {
-        opacity: 0,
+        // opacity: 0,
         y: 20,
         duration: 0.3,
         ease: 'power2.out'
