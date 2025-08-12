@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Generator - Create Professional Animated Portfolios</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- GSAP Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- JSZip for Download Functionality -->
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3/dist/jszip.min.js"></script>
+    
+    <!-- Prism for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-900 text-white min-h-screen">
+    <!-- Particle Canvas Background -->
+    <canvas id="particle-canvas" class="fixed inset-0 z-0"></canvas>
+    
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center z-50">
+        <div class="text-center text-white">
+            <div class="loading-spinner w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mb-4 mx-auto"></div>
+            <h2 class="text-2xl font-bold mb-4">Portfolio Generator</h2>
+            <div class="w-64 h-2 bg-white/30 rounded-full overflow-hidden">
+                <div class="loading-progress h-full bg-white rounded-full w-0"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="fixed top-0 w-full bg-slate-900/95 backdrop-blur-md z-40 border-b border-slate-700">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                    ✨ Portfolio Generator
+                </h1>
+                <div id="step-indicator" class="text-sm text-slate-400">
+                    Step <span id="current-step">1</span> of 6
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-20">
+        <!-- Welcome Screen -->
+        <section id="welcome-screen" class="min-h-screen flex items-center justify-center relative z-10">
+            <div class="container mx-auto px-6 text-center">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="welcome-title text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                        Create Stunning Animated Portfolios
+                    </h2>
+                    <p class="welcome-subtitle text-xl md:text-2xl text-slate-300 mb-12 leading-relaxed">
+                        Generate professional developer portfolios with GSAP animations, Tailwind CSS, and modern responsive design. Choose from 8 beautiful templates.
+                    </p>
+                    
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                        <div class="feature-card bg-slate-800/50 backdrop-blur-sm p-6 rounded-2xl border border-slate-700">
+                            <div class="text-4xl mb-4">🎨</div>
+                            <h3 class="text-lg font-semibold mb-2">8 Animated Templates</h3>
+                            <p class="text-slate-400 text-sm">Modern designs with working GSAP animations and Tailwind CSS</p>
+                        </div>
+                        <div class="feature-card bg-slate-800/50 backdrop-blur-sm p-6 rounded-2xl border border-slate-700">
+                            <div class="text-4xl mb-4">📱</div>
+                            <h3 class="text-lg font-semibold mb-2">Fully Responsive</h3>
+                            <p class="text-slate-400 text-sm">Perfect on all devices with mobile-optimized layouts</p>
+                        </div>
+                        <div class="feature-card bg-slate-800/50 backdrop-blur-sm p-6 rounded-2xl border border-slate-700">
+                            <div class="text-4xl mb-4">⚡</div>
+                            <h3 class="text-lg font-semibold mb-2">Live Preview</h3>
+                            <p class="text-slate-400 text-sm">See your portfolio with animations before download</p>
+                        </div>
+                        <div class="feature-card bg-slate-800/50 backdrop-blur-sm p-6 rounded-2xl border border-slate-700">
+                            <div class="text-4xl mb-4">💾</div>
+                            <h3 class="text-lg font-semibold mb-2">Complete Package</h3>
+                            <p class="text-slate-400 text-sm">Download ready-to-use HTML, CSS, and JS files</p>
+                        </div>
+                    </div>
+                    
+                    <button id="start-btn" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-4 rounded-2xl text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl">
+                        Create My Portfolio
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Form Container -->
+        <div id="form-container" class="hidden min-h-screen py-12 relative z-10">
+            <div class="container mx-auto px-6">
+                <!-- Progress Bar -->
+                <div class="max-w-4xl mx-auto mb-12">
+                    <div class="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold">Progress</h3>
+                            <span id="progress-percentage" class="text-blue-400 font-medium">16%</span>
+                        </div>
+                        <div class="w-full bg-slate-700 rounded-full h-2 overflow-hidden">
+                            <div id="progress-fill" class="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-500 w-1/6"></div>
+                        </div>
+                        <div class="grid grid-cols-6 gap-2 mt-4 text-xs">
+                            <div class="progress-step active text-center text-blue-400">Personal</div>
+                            <div class="progress-step text-center text-slate-500">Skills</div>
+                            <div class="progress-step text-center text-slate-500">Education</div>
+                            <div class="progress-step text-center text-slate-500">Projects</div>
+                            <div class="progress-step text-center text-slate-500">Social</div>
+                            <div class="progress-step text-center text-slate-500">Template</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Personal Information -->
+                <section id="step-1" class="form-step">
+                    <div class="max-w-2xl mx-auto bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-slate-700">
+                        <h2 class="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Personal Information</h2>
+                        <div class="space-y-6">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">Full Name *</label>
+                                    <input type="text" id="fullName" required 
+                                           class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">Professional Title *</label>
+                                    <input type="text" id="title" required placeholder="Frontend Developer, Full Stack Engineer, etc."
+                                           class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                </div>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">Email *</label>
+                                    <input type="email" id="email" required 
+                                           class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">Phone</label>
+                                    <input type="tel" id="phone"
+                                           class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                </div>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">Location</label>
+                                    <input type="text" id="location" placeholder="City, Country"
+                                           class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">Profile Image URL</label>
+                                    <input type="url" id="profileImage" placeholder="https://example.com/image.jpg"
+                                           class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">About Me *</label>
+                                <textarea id="about" rows="4" required placeholder="Tell us about yourself, your experience, and what drives you as a developer..."
+                                          class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex justify-end mt-8">
+                            <button onclick="nextStep(2)" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105">
+                                Next Step →
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 2: Skills -->
+                <section id="step-2" class="form-step hidden">
+                    <div class="max-w-2xl mx-auto bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-slate-700">
+                        <h2 class="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Skills & Expertise</h2>
+                        <div class="space-y-6">
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <input type="text" id="skill-input" placeholder="Enter skill (e.g., JavaScript, React)"
+                                       class="flex-1 px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                <select id="skill-category" class="px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                    <option value="Frontend">Frontend</option>
+                                    <option value="Backend">Backend</option>
+                                    <option value="Database">Database</option>
+                                    <option value="DevOps">DevOps</option>
+                                    <option value="Mobile">Mobile</option>
+                                    <option value="Design">Design</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <select id="skill-level" class="px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                    <option value="Beginner">Beginner</option>
+                                    <option value="Intermediate">Intermediate</option>
+                                    <option value="Advanced">Advanced</option>
+                                    <option value="Expert">Expert</option>
+                                </select>
+                                <button onclick="addSkill()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 whitespace-nowrap">
+                                    Add Skill
+                                </button>
+                            </div>
+                            <div id="skills-list" class="min-h-[100px] flex flex-wrap gap-3"></div>
+                        </div>
+                        <div class="flex justify-between mt-8">
+                            <button onclick="previousStep(1)" class="bg-slate-600 hover:bg-slate-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300">
+                                ← Previous
+                            </button>
+                            <button onclick="nextStep(3)" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105">
+                                Next Step →
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 3: Education -->
+                <section id="step-3" class="form-step hidden">
+                    <div class="max-w-2xl mx-auto bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-slate-700">
+                        <h2 class="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Education & Experience</h2>
+                        <div class="space-y-6">
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <input type="text" id="edu-institution" placeholder="Institution Name"
+                                       class="px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                <input type="text" id="edu-degree" placeholder="Degree/Certificate"
+                                       class="px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                <input type="text" id="edu-year" placeholder="Year/Duration"
+                                       class="px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            </div>
+                            <textarea id="edu-description" rows="3" placeholder="Description (optional)"
+                                      class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"></textarea>
+                            <button onclick="addEducation()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300">
+                                Add Education
+                            </button>
+                            <div id="education-list" class="min-h-[100px] space-y-3"></div>
+                        </div>
+                        <div class="flex justify-between mt-8">
+                            <button onclick="previousStep(2)" class="bg-slate-600 hover:bg-slate-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300">
+                                ← Previous
+                            </button>
+                            <button onclick="nextStep(4)" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105">
+                                Next Step →
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 4: Projects -->
+                <section id="step-4" class="form-step hidden">
+                    <div class="max-w-2xl mx-auto bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-slate-700">
+                        <h2 class="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Projects Showcase</h2>
+                        <div class="space-y-6">
+                            <input type="text" id="project-title" placeholder="Project Title"
+                                   class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            <textarea id="project-description" rows="3" placeholder="Project description and key features..."
+                                      class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"></textarea>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <input type="text" id="project-technologies" placeholder="Technologies (e.g., React, Node.js)"
+                                       class="px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                <input type="url" id="project-image" placeholder="Project Image URL"
+                                       class="px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <input type="url" id="project-github" placeholder="GitHub URL"
+                                       class="px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                <input type="url" id="project-demo" placeholder="Live Demo URL"
+                                       class="px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            </div>
+                            <button onclick="addProject()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300">
+                                Add Project
+                            </button>
+                            <div id="projects-list" class="min-h-[100px] space-y-3"></div>
+                        </div>
+                        <div class="flex justify-between mt-8">
+                            <button onclick="previousStep(3)" class="bg-slate-600 hover:bg-slate-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300">
+                                ← Previous
+                            </button>
+                            <button onclick="nextStep(5)" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105">
+                                Next Step →
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 5: Social -->
+                <section id="step-5" class="form-step hidden">
+                    <div class="max-w-2xl mx-auto bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-slate-700">
+                        <h2 class="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Social & Contact Links</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">🐙 GitHub</label>
+                                <input type="url" id="social-github" placeholder="https://github.com/username"
+                                       class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">💼 LinkedIn</label>
+                                <input type="url" id="social-linkedin" placeholder="https://linkedin.com/in/username"
+                                       class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">🐦 Twitter</label>
+                                <input type="url" id="social-twitter" placeholder="https://twitter.com/username"
+                                       class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">🌐 Portfolio Website</label>
+                                <input type="url" id="social-website" placeholder="https://yourwebsite.com"
+                                       class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-300 mb-2">📄 Resume/CV</label>
+                                <input type="url" id="social-resume" placeholder="https://yourresume.pdf"
+                                       class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            </div>
+                        </div>
+                        <div class="flex justify-between mt-8">
+                            <button onclick="previousStep(4)" class="bg-slate-600 hover:bg-slate-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300">
+                                ← Previous
+                            </button>
+                            <button onclick="nextStep(6)" class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105">
+                                Choose Template →
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 6: Template Selection -->
+                <section id="step-6" class="form-step hidden">
+                    <div class="max-w-6xl mx-auto">
+                        <div class="text-center mb-12">
+                            <h2 class="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Choose Your Animated Template</h2>
+                            <p class="text-slate-300 text-lg">Select from 8 professionally designed templates with Tailwind CSS and GSAP animations</p>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                            <!-- Modern Professional -->
+                            <div class="template-card cursor-pointer" data-template="modern" onclick="selectTemplate('modern')">
+                                <div class="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700 hover:border-blue-500 transition-all duration-300 hover:scale-105">
+                                    <div class="h-32 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl mb-4 flex items-center justify-center">
+                                        <div class="text-white font-bold">Modern</div>
+                                    </div>
+                                    <h3 class="text-lg font-semibold mb-2">Modern Professional</h3>
+                                    <p class="text-slate-400 text-sm mb-3">Clean corporate design with smooth animations</p>
+                                    <div class="flex flex-wrap gap-1">
+                                        <span class="bg-blue-500/20 text-blue-400 text-xs px-2 py-1 rounded">GSAP</span>
+                                        <span class="bg-blue-500/20 text-blue-400 text-xs px-2 py-1 rounded">Tailwind</span>
+                                        <span class="bg-blue-500/20 text-blue-400 text-xs px-2 py-1 rounded">Responsive</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Creative Developer -->
+                            <div class="template-card cursor-pointer" data-template="creative" onclick="selectTemplate('creative')">
+                                <div class="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700 hover:border-pink-500 transition-all duration-300 hover:scale-105">
+                                    <div class="h-32 bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl mb-4 flex items-center justify-center">
+                                        <div class="text-white font-bold">Creative</div>
+                                    </div>
+                                    <h3 class="text-lg font-semibold mb-2">Creative Developer</h3>
+                                    <p class="text-slate-400 text-sm mb-3">Colorful, dynamic design with interactive elements</p>
+                                    <div class="flex flex-wrap gap-1">
+                                        <span class="bg-pink-500/20 text-pink-400 text-xs px-2 py-1 rounded">Creative</span>
+                                        <span class="bg-pink-500/20 text-pink-400 text-xs px-2 py-1 rounded">Interactive</span>
+                                        <span class="bg-pink-500/20 text-pink-400 text-xs px-2 py-1 rounded">Animated</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Minimal Portfolio -->
+                            <div class="template-card cursor-pointer" data-template="minimal" onclick="selectTemplate('minimal')">
+                                <div class="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700 hover:border-gray-500 transition-all duration-300 hover:scale-105">
+                                    <div class="h-32 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl mb-4 flex items-center justify-center">
+                                        <div class="text-white font-bold">Minimal</div>
+                                    </div>
+                                    <h3 class="text-lg font-semibold mb-2">Minimal Portfolio</h3>
+                                    <p class="text-slate-400 text-sm mb-3">Clean minimalist design with subtle animations</p>
+                                    <div class="flex flex-wrap gap-1">
+                                        <span class="bg-gray-500/20 text-gray-400 text-xs px-2 py-1 rounded">Minimal</span>
+                                        <span class="bg-gray-500/20 text-gray-400 text-xs px-2 py-1 rounded">Clean</span>
+                                        <span class="bg-gray-500/20 text-gray-400 text-xs px-2 py-1 rounded">Typography</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Dark Neon -->
+                            <div class="template-card cursor-pointer" data-template="dark-neon" onclick="selectTemplate('dark-neon')">
+                                <div class="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700 hover:border-green-500 transition-all duration-300 hover:scale-105">
+                                    <div class="h-32 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl mb-4 flex items-center justify-center">
+                                        <div class="text-white font-bold">Neon</div>
+                                    </div>
+                                    <h3 class="text-lg font-semibold mb-2">Dark Neon Theme</h3>
+                                    <p class="text-slate-400 text-sm mb-3">Dark background with neon glow effects</p>
+                                    <div class="flex flex-wrap gap-1">
+                                        <span class="bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded">Neon</span>
+                                        <span class="bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded">Dark</span>
+                                        <span class="bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded">Glow</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Glassmorphism -->
+                            <div class="template-card cursor-pointer" data-template="glassmorphism" onclick="selectTemplate('glassmorphism')">
+                                <div class="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700 hover:border-purple-500 transition-all duration-300 hover:scale-105">
+                                    <div class="h-32 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl mb-4 flex items-center justify-center">
+                                        <div class="text-white font-bold">Glass</div>
+                                    </div>
+                                    <h3 class="text-lg font-semibold mb-2">Glassmorphism</h3>
+                                    <p class="text-slate-400 text-sm mb-3">Modern glass effects with backdrop blur</p>
+                                    <div class="flex flex-wrap gap-1">
+                                        <span class="bg-purple-500/20 text-purple-400 text-xs px-2 py-1 rounded">Glass</span>
+                                        <span class="bg-purple-500/20 text-purple-400 text-xs px-2 py-1 rounded">Blur</span>
+                                        <span class="bg-purple-500/20 text-purple-400 text-xs px-2 py-1 rounded">Modern</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Cyberpunk -->
+                            <div class="template-card cursor-pointer" data-template="cyberpunk" onclick="selectTemplate('cyberpunk')">
+                                <div class="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700 hover:border-cyan-500 transition-all duration-300 hover:scale-105">
+                                    <div class="h-32 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl mb-4 flex items-center justify-center">
+                                        <div class="text-white font-bold">Cyber</div>
+                                    </div>
+                                    <h3 class="text-lg font-semibold mb-2">Cyberpunk</h3>
+                                    <p class="text-slate-400 text-sm mb-3">Futuristic design with glitch effects</p>
+                                    <div class="flex flex-wrap gap-1">
+                                        <span class="bg-cyan-500/20 text-cyan-400 text-xs px-2 py-1 rounded">Cyber</span>
+                                        <span class="bg-cyan-500/20 text-cyan-400 text-xs px-2 py-1 rounded">Glitch</span>
+                                        <span class="bg-cyan-500/20 text-cyan-400 text-xs px-2 py-1 rounded">Future</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Gradient Paradise -->
+                            <div class="template-card cursor-pointer" data-template="gradient-paradise" onclick="selectTemplate('gradient-paradise')">
+                                <div class="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700 hover:border-orange-500 transition-all duration-300 hover:scale-105">
+                                    <div class="h-32 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl mb-4 flex items-center justify-center">
+                                        <div class="text-white font-bold">Gradient</div>
+                                    </div>
+                                    <h3 class="text-lg font-semibold mb-2">Gradient Paradise</h3>
+                                    <p class="text-slate-400 text-sm mb-3">Stunning animated gradients</p>
+                                    <div class="flex flex-wrap gap-1">
+                                        <span class="bg-orange-500/20 text-orange-400 text-xs px-2 py-1 rounded">Gradient</span>
+                                        <span class="bg-orange-500/20 text-orange-400 text-xs px-2 py-1 rounded">Colorful</span>
+                                        <span class="bg-orange-500/20 text-orange-400 text-xs px-2 py-1 rounded">Vibrant</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Particle Nexus -->
+                            <div class="template-card cursor-pointer" data-template="particle-nexus" onclick="selectTemplate('particle-nexus')">
+                                <div class="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700 hover:border-indigo-500 transition-all duration-300 hover:scale-105">
+                                    <div class="h-32 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl mb-4 flex items-center justify-center">
+                                        <div class="text-white font-bold">Particle</div>
+                                    </div>
+                                    <h3 class="text-lg font-semibold mb-2">Particle Nexus</h3>
+                                    <p class="text-slate-400 text-sm mb-3">Space-themed with particle systems</p>
+                                    <div class="flex flex-wrap gap-1">
+                                        <span class="bg-indigo-500/20 text-indigo-400 text-xs px-2 py-1 rounded">Particle</span>
+                                        <span class="bg-indigo-500/20 text-indigo-400 text-xs px-2 py-1 rounded">Space</span>
+                                        <span class="bg-indigo-500/20 text-indigo-400 text-xs px-2 py-1 rounded">3D</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-center">
+                            <button onclick="previousStep(5)" class="bg-slate-600 hover:bg-slate-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300">
+                                ← Previous
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Code Generation Screen -->
+        <section id="code-screen" class="hidden min-h-screen py-12 relative z-10">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">🎉 Your Portfolio is Ready!</h2>
+                    <p class="text-slate-300 text-lg mb-8">Your professional portfolio has been generated with working GSAP animations, Tailwind CSS, and modern responsive design.</p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+                        <button onclick="previewPortfolio()" class="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-300 transform hover:scale-105">
+                            🚀 Live Preview
+                        </button>
+                        <button onclick="downloadPortfolio()" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-300 transform hover:scale-105">
+                            📥 Download ZIP
+                        </button>
+                        <button onclick="startOver()" class="bg-slate-600 hover:bg-slate-700 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-300">
+                            🔄 Create Another
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="max-w-6xl mx-auto">
+                    <div class="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 overflow-hidden">
+                        <!-- Code Tabs -->
+                        <div class="flex border-b border-slate-700">
+                            <button class="code-tab-btn active px-6 py-4 text-sm font-semibold bg-slate-700 text-white border-b-2 border-blue-500" onclick="showCodeTab('html')">
+                                📄 index.html
+                            </button>
+                            <button class="code-tab-btn px-6 py-4 text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50" onclick="showCodeTab('css')">
+                                🎨 style.css
+                            </button>
+                            <button class="code-tab-btn px-6 py-4 text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-700/50" onclick="showCodeTab('js')">
+                                ⚡ script.js
+                            </button>
+                        </div>
+                        
+                        <!-- Code Content -->
+                        <div class="relative">
+                            <div id="html-code" class="code-tab-content">
+                                <div class="flex justify-between items-center p-4 border-b border-slate-700">
+                                    <span class="text-slate-300 font-mono text-sm">📄 index.html</span>
+                                    <button onclick="copyCode('html')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
+                                        📋 Copy
+                                    </button>
+                                </div>
+                                <pre class="overflow-auto max-h-96 p-6"><code class="language-html" id="html-content"></code></pre>
+                            </div>
+                            
+                            <div id="css-code" class="code-tab-content hidden">
+                                <div class="flex justify-between items-center p-4 border-b border-slate-700">
+                                    <span class="text-slate-300 font-mono text-sm">🎨 style.css</span>
+                                    <button onclick="copyCode('css')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
+                                        📋 Copy
+                                    </button>
+                                </div>
+                                <pre class="overflow-auto max-h-96 p-6"><code class="language-css" id="css-content"></code></pre>
+                            </div>
+                            
+                            <div id="js-code" class="code-tab-content hidden">
+                                <div class="flex justify-between items-center p-4 border-b border-slate-700">
+                                    <span class="text-slate-300 font-mono text-sm">⚡ script.js</span>
+                                    <button onclick="copyCode('js')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all">
+                                        📋 Copy
+                                    </button>
+                                </div>
+                                <pre class="overflow-auto max-h-96 p-6"><code class="language-javascript" id="js-content"></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-6 right-6 transform translate-x-full bg-slate-800 text-white px-6 py-4 rounded-xl shadow-lg border border-slate-700 transition-transform duration-300 z-50">
+        <span id="toast-message"></span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
