@@ -166,7 +166,6 @@ function startWelcomeAnimations() {
   console.log("🎬 Starting welcome animations");
 
   const tl = gsap.timeline();
-
   tl.to(".welcome-title", {
     opacity: 1,
     y: 0,
@@ -199,13 +198,8 @@ function startWelcomeAnimations() {
 function setupEventListeners() {
   console.log("🔧 Setting up event listeners");
 
-  // Multiple methods to ensure start button works
   setupStartButton();
-
-  // Form navigation
   setupFormNavigation();
-
-  // Input handlers
   setupInputHandlers();
 
   console.log("✅ Event listeners ready");
@@ -214,69 +208,34 @@ function setupEventListeners() {
 function setupStartButton() {
   console.log("Setting up start button...");
 
-  // Method 1: Direct event listener
   const startBtn = document.getElementById("start-btn");
   if (startBtn) {
-    console.log("Start button found, attaching listeners");
-
     startBtn.addEventListener("click", function (e) {
-      console.log("Start button clicked!");
       e.preventDefault();
       e.stopPropagation();
       startPortfolioCreation();
     });
 
-    // Keyboard support
     startBtn.addEventListener("keydown", function (e) {
       if (e.key === "Enter" || e.key === " ") {
-        console.log("Start button activated with keyboard");
         e.preventDefault();
         startPortfolioCreation();
       }
     });
 
-    // Make button focusable
     startBtn.setAttribute("tabindex", "0");
-
-    console.log("Start button listeners attached");
-  } else {
-    console.warn("Start button not found by ID");
   }
 
-  // Method 2: Event delegation as backup
   document.addEventListener("click", function (e) {
-    if (e.target && e.target.id === "start-btn") {
-      console.log("Start button clicked via delegation!");
-      e.preventDefault();
-      startPortfolioCreation();
-    }
-
-    // Also check for nested elements
     const startButton = e.target.closest("#start-btn");
     if (startButton) {
-      console.log("Start button clicked via closest!");
       e.preventDefault();
       startPortfolioCreation();
     }
   });
-
-  // Method 3: Wait and retry if needed
-  setTimeout(() => {
-    const startBtn2 = document.getElementById("start-btn");
-    if (startBtn2 && !startBtn2.hasAttribute("data-listener-attached")) {
-      console.log("Retrying start button setup...");
-      startBtn2.addEventListener("click", function (e) {
-        console.log("Start button clicked (retry method)!");
-        e.preventDefault();
-        startPortfolioCreation();
-      });
-      startBtn2.setAttribute("data-listener-attached", "true");
-    }
-  }, 1000);
 }
 
 function setupFormNavigation() {
-  // Add skill on Enter key
   const skillInput = document.getElementById("skill-input");
   if (skillInput) {
     skillInput.addEventListener("keypress", (e) => {
@@ -289,7 +248,6 @@ function setupFormNavigation() {
 }
 
 function setupInputHandlers() {
-  // Focus animations for inputs
   document.addEventListener(
     "focus",
     (e) => {
@@ -325,9 +283,6 @@ function startPortfolioCreation() {
   const welcomeScreen = document.getElementById("welcome-screen");
   const formContainer = document.getElementById("form-container");
 
-  console.log("Welcome screen:", welcomeScreen);
-  console.log("Form container:", formContainer);
-
   if (!welcomeScreen || !formContainer) {
     console.error("❌ Required elements not found");
     showToast("Navigation error - please refresh the page", "error");
@@ -336,7 +291,6 @@ function startPortfolioCreation() {
 
   showToast("Starting portfolio creation... ✨", "info");
 
-  // Ensure form container is ready
   formContainer.classList.remove("hidden");
 
   gsap.to(welcomeScreen, {
@@ -356,7 +310,6 @@ function startPortfolioCreation() {
           duration: 0.8,
           ease: "power2.out",
           onComplete: () => {
-            console.log("Navigation completed successfully");
             showStep(1);
             updateProgress();
             showToast("Welcome to the portfolio builder! 🎉");
@@ -390,7 +343,6 @@ function navigateToStep(step) {
     return;
   }
 
-  // Hide current step
   if (currentStepEl) {
     gsap.to(currentStepEl, {
       opacity: 0,
@@ -413,12 +365,10 @@ function navigateToStep(step) {
 function showStep(step) {
   console.log("Showing step:", step);
 
-  // Hide all steps first
   document.querySelectorAll(".form-step").forEach((stepEl) => {
     stepEl.classList.add("hidden");
   });
 
-  // Show target step
   const stepEl = document.getElementById(`step-${step}`);
   if (!stepEl) {
     console.error("Step element not found:", step);
@@ -438,7 +388,6 @@ function showStep(step) {
     }
   );
 
-  // Animate template cards for step 6
   if (step === 6) {
     gsap.set(".template-card", { opacity: 0, y: 20 });
     gsap.to(".template-card", {
@@ -455,26 +404,22 @@ function showStep(step) {
 function updateProgress() {
   const percentage = Math.round((currentStep / 6) * 100);
 
-  // Update progress bar
   gsap.to("#progress-fill", {
     width: `${percentage}%`,
     duration: 0.8,
     ease: "power2.out",
   });
 
-  // Update percentage text
   const percentageEl = document.getElementById("progress-percentage");
   if (percentageEl) {
     percentageEl.textContent = `${percentage}%`;
   }
 
-  // Update step indicator
   const stepIndicator = document.getElementById("current-step");
   if (stepIndicator) {
     stepIndicator.textContent = currentStep;
   }
 
-  // Update progress steps
   document.querySelectorAll(".progress-step").forEach((step, index) => {
     if (index + 1 <= currentStep) {
       step.classList.add("active");
@@ -499,7 +444,6 @@ function addSkill() {
     return;
   }
 
-  // Check for duplicates
   if (
     portfolioData.skills.some(
       (s) => s.skill.toLowerCase() === skill.toLowerCase()
@@ -523,20 +467,20 @@ function displaySkill(skillObj) {
   if (!skillsList) return;
 
   const skillTag = document.createElement("div");
-  skillTag.className = "skill-tag ";
+  skillTag.className = "skill-tag";
   skillTag.innerHTML = `
-        <span>${skillObj.skill}</span>
-        <span class="skill-level">${skillObj.level}</span>
-        <button class="skill-remove" onclick="removeSkill('${skillObj.skill.replace(
-          /'/g,
-          "\\'"
-        )}')" type="button">&times;</button>
-    `;
+    <span>${skillObj.skill}</span>
+    <span class="skill-level">${skillObj.level}</span>
+    <button class="skill-remove" onclick="removeSkill('${skillObj.skill.replace(
+      /'/g,
+      "\\'"
+    )}')" type="button">&times;</button>
+  `;
 
   skillsList.appendChild(skillTag);
 
   gsap.from(skillTag, {
-    // opacity: 1,
+    opacity: 0,
     scale: 0.8,
     duration: 0.3,
     ease: "back.out(1.7)",
@@ -588,19 +532,19 @@ function displayEducation(eduObj) {
   const eduItem = document.createElement("div");
   eduItem.className = "education-item";
   eduItem.innerHTML = `
-        <h4>${eduObj.degree}</h4>
-        <p>${eduObj.institution} • ${eduObj.year}</p>
-        ${eduObj.description ? `<p>${eduObj.description}</p>` : ""}
-        <button class="remove-btn" onclick="removeEducation('${eduObj.institution.replace(
-          /'/g,
-          "\\'"
-        )}', '${eduObj.degree.replace(/'/g, "\\'")}')">Remove</button>
-    `;
+    <h4>${eduObj.degree}</h4>
+    <p>${eduObj.institution} • ${eduObj.year}</p>
+    ${eduObj.description ? `<p>${eduObj.description}</p>` : ""}
+    <button class="remove-btn" onclick="removeEducation('${eduObj.institution.replace(
+      /'/g,
+      "\\'"
+    )}', '${eduObj.degree.replace(/'/g, "\\'")}')" type="button">Remove</button>
+  `;
 
   eduList.appendChild(eduItem);
 
   gsap.from(eduItem, {
-    // opacity: 1,
+    opacity: 0,
     y: 20,
     duration: 0.3,
     ease: "power2.out",
@@ -666,37 +610,37 @@ function displayProject(projectObj) {
   const projectItem = document.createElement("div");
   projectItem.className = "project-item";
   projectItem.innerHTML = `
-        <h4>${projectObj.title}</h4>
-        <p>${projectObj.description}</p>
-        <div class="project-technologies">Technologies: ${
-          projectObj.technologies
-        }</div>
+    <h4>${projectObj.title}</h4>
+    <p>${projectObj.description}</p>
+    <div class="project-technologies">Technologies: ${
+      projectObj.technologies
+    }</div>
+    ${
+      projectObj.github || projectObj.demo
+        ? `<div class="project-links">
         ${
-          projectObj.github || projectObj.demo
-            ? `<div class="project-links">
-            ${
-              projectObj.github
-                ? `<a href="${projectObj.github}" target="_blank">GitHub</a>`
-                : ""
-            }
-            ${
-              projectObj.demo
-                ? `<a href="${projectObj.demo}" target="_blank">Demo</a>`
-                : ""
-            }
-        </div>`
+          projectObj.github
+            ? `<a href="${projectObj.github}" target="_blank">GitHub</a>`
             : ""
         }
-        <button class="remove-btn" onclick="removeProject('${projectObj.title.replace(
-          /'/g,
-          "\\'"
-        )}')">Remove</button>
-    `;
+        ${
+          projectObj.demo
+            ? `<a href="${projectObj.demo}" target="_blank">Demo</a>`
+            : ""
+        }
+    </div>`
+        : ""
+    }
+    <button class="remove-btn" onclick="removeProject('${projectObj.title.replace(
+      /'/g,
+      "\\'"
+    )}')" type="button">Remove</button>
+  `;
 
   projectsList.appendChild(projectItem);
 
   gsap.from(projectItem, {
-    // opacity: 0,
+    opacity: 0,
     y: 20,
     duration: 0.3,
     ease: "power2.out",
@@ -737,7 +681,6 @@ function refreshProjectsDisplay() {
 function selectTemplate(templateId) {
   console.log("🎨 Template selected:", templateId);
 
-  // Update UI
   document.querySelectorAll(".template-card").forEach((card) => {
     card.classList.remove("selected");
   });
@@ -804,7 +747,6 @@ function showCodeScreen() {
 function showCodeTab(tab) {
   console.log("Showing code tab:", tab);
 
-  // Update tab buttons
   document
     .querySelectorAll(".code-tab-btn")
     .forEach((btn) => btn.classList.remove("active"));
@@ -812,7 +754,6 @@ function showCodeTab(tab) {
     .querySelectorAll(".code-tab-content")
     .forEach((content) => content.classList.add("hidden"));
 
-  // Show selected tab
   const tabBtn = event?.target?.closest(".code-tab-btn");
   const tabContent = document.getElementById(`${tab}-code`);
 
@@ -907,7 +848,6 @@ async function previewPortfolio() {
       showToast("Please allow popups to preview your portfolio", "error");
     } else {
       showToast("Opening live preview... 🚀");
-      // Clean up URL after 30 seconds
       setTimeout(() => URL.revokeObjectURL(url), 30000);
     }
   } catch (error) {
@@ -941,12 +881,10 @@ async function downloadPortfolio() {
 
     const zip = new JSZip();
 
-    // Add files to zip
     zip.file("index.html", htmlContent.textContent);
     zip.file("style.css", cssContent.textContent);
     zip.file("script.js", jsContent.textContent);
 
-    // Add README
     const readme = `# Portfolio - ${
       portfolioData.personal.fullName || "Generated Portfolio"
     }
@@ -970,7 +908,6 @@ Enjoy your new portfolio! 🚀
 
     zip.file("README.md", readme);
 
-    // Generate and download zip
     const content = await zip.generateAsync({
       type: "blob",
       compression: "DEFLATE",
@@ -991,7 +928,6 @@ Enjoy your new portfolio! 🚀
     link.click();
     document.body.removeChild(link);
 
-    // Clean up
     setTimeout(() => URL.revokeObjectURL(url), 1000);
 
     showToast("Portfolio downloaded successfully! 📥");
@@ -1031,7 +967,6 @@ function startOver() {
     },
   });
 
-  // Reset state
   portfolioData = {
     personal: {},
     skills: [],
@@ -1043,7 +978,6 @@ function startOver() {
 
   currentStep = 1;
 
-  // Clear forms
   document
     .querySelectorAll("input, textarea")
     .forEach((input) => (input.value = ""));
@@ -1055,12 +989,10 @@ function startOver() {
   if (educationList) educationList.innerHTML = "";
   if (projectsList) projectsList.innerHTML = "";
 
-  // Remove template selections
   document
     .querySelectorAll(".template-card")
     .forEach((card) => card.classList.remove("selected"));
 
-  // Reset progress
   updateProgress();
 
   showToast("Starting over... 🔄");
@@ -1121,6 +1053,22 @@ function saveCurrentStepData() {
   }
 }
 
+// Utility function for skill percentages
+function getSkillPercentage(level) {
+  switch (level.toLowerCase()) {
+    case "beginner":
+      return "25";
+    case "intermediate":
+      return "50";
+    case "advanced":
+      return "75";
+    case "expert":
+      return "90";
+    default:
+      return "50";
+  }
+}
+
 // Template Generators
 function generatePortfolioCode() {
   console.log(
@@ -1155,12 +1103,6 @@ function generatePortfolioCode() {
     case "particle-nexus":
       result = generateParticleTemplate();
       break;
-    case "aurora":
-      result = generateAuroraTemplate();
-      break;
-    case "holographic":
-      result = generateHolographicTemplate();
-      break;
     default:
       result = generateModernTemplate();
   }
@@ -1182,25 +1124,46 @@ function generatePortfolioCode() {
   console.log("✅ Code generation complete");
 }
 
+// Template 1: Modern Professional
 function generateModernTemplate() {
   const data = portfolioData;
+
+  const skillsHTML = data.skills.map(skill => `
+    <div class="mb-4">
+      <div class="flex justify-between mb-2">
+        <span class="text-sm font-medium text-gray-700">${skill.skill}</span>
+        <span class="text-sm text-gray-500">${skill.level}</span>
+      </div>
+      <div class="w-full bg-gray-200 rounded-full h-2.5">
+        <div class="bg-blue-600 h-2.5 rounded-full skill-bar" data-skill="${getSkillPercentage(skill.level)}" style="width: 0%"></div>
+      </div>
+    </div>
+  `).join('');
+
+  const projectsHTML = data.projects.map(project => `
+    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 project-card">
+      ${project.image ? `<img src="${project.image}" alt="${project.title}" class="w-full h-48 object-cover">` : ''}
+      <div class="p-6">
+        <h3 class="text-xl font-semibold text-gray-900 mb-2">${project.title}</h3>
+        <p class="text-gray-600 mb-4">${project.description}</p>
+        <div class="text-sm text-blue-600 mb-4">${project.technologies}</div>
+        <div class="flex gap-4">
+          ${project.github ? `<a href="${project.github}" target="_blank" class="text-blue-600 hover:text-blue-800">GitHub</a>` : ''}
+          ${project.demo ? `<a href="${project.demo}" target="_blank" class="text-blue-600 hover:text-blue-800">Live Demo</a>` : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
 
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${data.personal.fullName || "Portfolio"} - ${
-    data.personal.title || "Developer"
-  }</title>
-    
-    <!-- Tailwind CSS -->
+    <title>${data.personal.fullName || "Portfolio"} - ${data.personal.title || "Developer"}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- GSAP -->
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="font-sans bg-gray-50">
@@ -1212,9 +1175,7 @@ function generateModernTemplate() {
     <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 shadow-sm">
         <div class="container mx-auto px-6 py-4">
             <div class="flex justify-between items-center">
-                <div class="text-2xl font-bold text-gray-900">${
-                  data.personal.fullName || "Portfolio"
-                }</div>
+                <div class="text-2xl font-bold text-gray-900">${data.personal.fullName || "Portfolio"}</div>
                 <div class="hidden md:flex space-x-8">
                     <a href="#hero" class="text-gray-600 hover:text-blue-600 transition-colors">Home</a>
                     <a href="#about" class="text-gray-600 hover:text-blue-600 transition-colors">About</a>
@@ -1228,25 +1189,14 @@ function generateModernTemplate() {
 
     <section id="hero" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 pt-20">
         <div class="container mx-auto px-6 text-center">
-            ${
-              data.personal.profileImage
-                ? `<div class="hero-image mb-8">
+            ${data.personal.profileImage ? `<div class="hero-image mb-8">
                 <img src="${data.personal.profileImage}" alt="${data.personal.fullName}" class="w-32 h-32 rounded-full mx-auto object-cover shadow-xl">
-            </div>`
-                : ""
-            }
+            </div>` : ""}
             <h1 class="hero-title text-6xl md:text-7xl font-bold text-gray-900 mb-6">
-                Hi, I'm <span class="text-blue-600">${
-                  (data.personal.fullName || "Developer").split(" ")[0]
-                }</span>
+                Hi, I'm <span class="text-blue-600">${(data.personal.fullName || "Developer").split(" ")[0]}</span>
             </h1>
-            <h2 class="hero-subtitle text-2xl md:text-3xl text-gray-600 mb-8">${
-              data.personal.title || "Full Stack Developer"
-            }</h2>
-            <p class="hero-description text-lg text-gray-600 max-w-3xl mx-auto mb-12">${
-              data.personal.about ||
-              "Passionate developer creating amazing digital experiences."
-            }</p>
+            <h2 class="hero-subtitle text-2xl md:text-3xl text-gray-600 mb-8">${data.personal.title || "Full Stack Developer"}</h2>
+            <p class="hero-description text-lg text-gray-600 max-w-3xl mx-auto mb-12">${data.personal.about || "Passionate developer creating amazing digital experiences."}</p>
             <div class="hero-buttons flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="#projects" class="bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-700 transition-all transform hover:scale-105">
                     View My Work
@@ -1258,122 +1208,36 @@ function generateModernTemplate() {
         </div>
     </section>
 
-    ${
-      data.skills?.length
-        ? `<section id="skills" class="py-20 bg-white">
+    ${data.skills?.length ? `<section id="skills" class="py-20 bg-white">
         <div class="container mx-auto px-6">
             <h2 class="section-title text-4xl font-bold text-center text-gray-900 mb-16">Skills & Expertise</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                ${data.skills
-                  .map(
-                    (skill, index) => `
-                <div class="skill-card bg-gray-50 p-6 rounded-xl shadow-sm hover:shadow-md transition-all" data-index="${index}">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-semibold text-gray-900">${
-                          skill.skill
-                        }</h3>
-                        <span class="text-xs px-3 py-1 bg-blue-100 text-blue-600 rounded-full">${
-                          skill.category
-                        }</span>
-                    </div>
-                    <div class="text-sm text-gray-600 mb-2">${skill.level}</div>
-                    <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="skill-bar bg-blue-600 h-2 rounded-full" data-width="${getSkillPercentage(
-                          skill.level
-                        )}"></div>
-                    </div>
-                </div>
-                `
-                  )
-                  .join("")}
+                ${skillsHTML}
             </div>
         </div>
-    </section>`
-        : ""
-    }
+    </section>` : ""}
 
-    ${
-      data.projects?.length
-        ? `<section id="projects" class="py-20 bg-gray-50">
+    ${data.projects?.length ? `<section id="projects" class="py-20 bg-gray-50">
         <div class="container mx-auto px-6">
             <h2 class="section-title text-4xl font-bold text-center text-gray-900 mb-16">Featured Projects</h2>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                ${data.projects
-                  .map(
-                    (project, index) => `
-                <div class="project-card bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all" data-index="${index}">
-                    ${
-                      project.image
-                        ? `<img src="${project.image}" alt="${project.title}" class="w-full h-48 object-cover">`
-                        : '<div class="w-full h-48 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center"><span class="text-white font-semibold">Project Image</span></div>'
-                    }
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold text-gray-900 mb-3">${
-                          project.title
-                        }</h3>
-                        <p class="text-gray-600 mb-4">${project.description}</p>
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            ${project.technologies
-                              .split(",")
-                              .map(
-                                (tech) =>
-                                  `<span class="px-3 py-1 bg-blue-50 text-blue-600 text-xs rounded-full">${tech.trim()}</span>`
-                              )
-                              .join("")}
-                        </div>
-                        <div class="flex gap-4">
-                            ${
-                              project.github
-                                ? `<a href="${project.github}" target="_blank" class="text-blue-600 hover:underline">GitHub</a>`
-                                : ""
-                            }
-                            ${
-                              project.demo
-                                ? `<a href="${project.demo}" target="_blank" class="text-blue-600 hover:underline">Live Demo</a>`
-                                : ""
-                            }
-                        </div>
-                    </div>
-                </div>
-                `
-                  )
-                  .join("")}
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 projects-grid">
+                ${projectsHTML}
             </div>
         </div>
-    </section>`
-        : ""
-    }
+    </section>` : ""}
 
     <section id="contact" class="py-20 bg-gray-900 text-white">
         <div class="container mx-auto px-6 text-center">
             <h2 class="text-4xl font-bold mb-8">Let's Work Together</h2>
             <p class="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">Ready to bring your ideas to life? Let's create something amazing together.</p>
             
-            ${
-              Object.values(data.social || {}).some((link) => link)
-                ? `<div class="flex justify-center space-x-8 mb-12">
-                ${
-                  data.social?.github
-                    ? `<a href="${data.social.github}" target="_blank" class="text-gray-300 hover:text-white transition-colors">GitHub</a>`
-                    : ""
-                }
-                ${
-                  data.social?.linkedin
-                    ? `<a href="${data.social.linkedin}" target="_blank" class="text-gray-300 hover:text-white transition-colors">LinkedIn</a>`
-                    : ""
-                }
-                ${
-                  data.social?.twitter
-                    ? `<a href="${data.social.twitter}" target="_blank" class="text-gray-300 hover:text-white transition-colors">Twitter</a>`
-                    : ""
-                }
-            </div>`
-                : ""
-            }
+            ${Object.values(data.social || {}).some(link => link) ? `<div class="flex justify-center space-x-8 mb-12">
+                ${data.social?.github ? `<a href="${data.social.github}" target="_blank" class="text-gray-300 hover:text-white transition-colors">GitHub</a>` : ""}
+                ${data.social?.linkedin ? `<a href="${data.social.linkedin}" target="_blank" class="text-gray-300 hover:text-white transition-colors">LinkedIn</a>` : ""}
+                ${data.social?.twitter ? `<a href="${data.social.twitter}" target="_blank" class="text-gray-300 hover:text-white transition-colors">Twitter</a>` : ""}
+            </div>` : ""}
             
-            <a href="mailto:${
-              data.personal.email || "contact@example.com"
-            }" class="bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-700 transition-all inline-block">
+            <a href="mailto:${data.personal.email || "contact@example.com"}" class="bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-700 transition-all inline-block">
                 Send Message
             </a>
         </div>
@@ -1381,9 +1245,7 @@ function generateModernTemplate() {
 
     <footer class="bg-gray-800 text-gray-300 py-8">
         <div class="container mx-auto px-6 text-center">
-            <p>&copy; 2024 ${
-              data.personal.fullName || "Portfolio"
-            }. All rights reserved.</p>
+            <p>&copy; 2024 ${data.personal.fullName || "Portfolio"}. All rights reserved.</p>
         </div>
     </footer>
 
@@ -1470,21 +1332,12 @@ function startAnimations() {
         });
     });
     
-    gsap.utils.toArray('.skill-card').forEach(card => {
-        gsap.to(card, {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: 'back.out(1.7)',
-            scrollTrigger: {
-                trigger: card,
-                start: 'top 80%',
-                onEnter: () => {
-                    const skillBar = card.querySelector('.skill-bar');
-                    const width = skillBar.getAttribute('data-width');
-                    gsap.to(skillBar, { width: width + '%', duration: 1.5, ease: 'power2.out' });
-                }
-            }
+    gsap.utils.toArray('.skill-bar').forEach(bar => {
+        gsap.to(bar, {
+            width: bar.getAttribute('data-skill') + '%',
+            duration: 1.5,
+            ease: 'power2.out',
+            scrollTrigger: { trigger: bar, start: 'top 80%' }
         });
     });
     
@@ -1504,7 +1357,7 @@ function startAnimations() {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
-                gsap.to(window, { duration: 1, scrollTo: target, ease: 'power2.inOut' });
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         });
     });
@@ -1767,7 +1620,7 @@ function generateMinimalTemplate() {
                 <div class="text-xl font-light">${data.personal.fullName || "Portfolio"}</div>
                 <div class="hidden md:flex space-x-12">
                     <a href="#about" class="text-gray-600 hover:text-gray-900 transition-colors text-sm tracking-wide">About</a>
-                    <a href="#about" class="text-gray-600 hover:text-gray-900 transition-colors text-sm tracking-wide">Skills</a>
+                    <a href="#skills" class="text-gray-600 hover:text-gray-900 transition-colors text-sm tracking-wide">Skills</a>
                     <a href="#work" class="text-gray-600 hover:text-gray-900 transition-colors text-sm tracking-wide">Work</a>
                     <a href="#contact" class="text-gray-600 hover:text-gray-900 transition-colors text-sm tracking-wide">Contact</a>
                 </div>
@@ -1804,7 +1657,7 @@ function generateMinimalTemplate() {
                         ${data.personal.location ? `<div>Location: ${data.personal.location}</div>` : ''}
                     </div>
                 </div>
-                <div id="skills">
+                <div>
                     <h2 class="text-3xl font-light text-gray-900 mb-8 section-title">Skills</h2>
                     <div class="w-12 h-px bg-gray-400 mb-8"></div>
                     <div class="skills-container">
@@ -1846,7 +1699,7 @@ function generateMinimalTemplate() {
   const css = `body { font-family: 'Inter', sans-serif; }
 .font-light { font-weight: 300; }
 
-.hero-title, .hero-subtitle, .hero-line, .hero-description { opacity: 1; transform: translateY(30px); }
+.hero-title, .hero-subtitle, .hero-line, .hero-description { opacity: 0; transform: translateY(30px); }
 .section-title, .skill-item, .project-item { opacity: 0; transform: translateY(30px); }
 .skill-line { width: 0%; transition: width 1.5s ease-out; }
 
@@ -2054,7 +1907,7 @@ function generateDarkNeonTemplate() {
 @keyframes neon-flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
 .neon-flicker { animation: neon-flicker 1.5s infinite; }
 
-.hero-name, .hero-title, .hero-description, .hero-buttons, .skill-item, .project-card { opacity: 1; transform: translateY(30px); }
+.hero-name, .hero-title, .hero-description, .hero-buttons, .skill-item, .project-card { opacity: 0; transform: translateY(30px); }
 .skill-glow { width: 0%; transition: width 2s ease-out; }
 
 @media (max-width: 768px) {
@@ -2113,256 +1966,36 @@ document.addEventListener('DOMContentLoaded', () => {
 function generateGlassmorphismTemplate() {
   const data = portfolioData;
 
-  const html = `<!doctype html>
+  const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>${data.personal.fullName || "Portfolio"}${
-    data.personal.title ? " — " + data.personal.title : ""
-  }</title>
-
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- GSAP + ScrollTrigger -->
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${data.personal.fullName || "Portfolio"} - Glassmorphism</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="antialiased bg-gradient-to-br from-white/95 via-blue-50 to-indigo-50 text-slate-900">
-
-  <!-- Decorative blurred backdrop -->
-  <div aria-hidden="true" class="fixed inset-0 -z-10 overflow-hidden">
-    <div class="absolute -left-28 -top-28 w-[520px] h-[520px] rounded-full bg-gradient-to-tr from-pink-200 to-violet-200 opacity-40 blur-3xl"></div>
-    <div class="absolute right-[-80px] bottom-[-80px] w-[420px] h-[420px] rounded-full bg-gradient-to-br from-cyan-100 to-blue-200 opacity-30 blur-2xl"></div>
-  </div>
-
-  <!-- Header -->
-  <header class="sticky top-4 z-40">
-    <div class="max-w-6xl mx-auto px-6">
-      <nav class="flex items-center justify-between bg-white/60 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white/40">
-        <div class="text-lg font-semibold">${
-          data.personal.fullName || "Your Name"
-        }</div>
-        <div class="hidden md:flex gap-6 text-sm">
-          <a href="#hero" class="hover:underline">Home</a>
-          <a href="#projects" class="hover:underline">Projects</a>
-          <a href="#skills" class="hover:underline">Skills</a>
-          <a href="#contact" class="hover:underline">Contact</a>
+<body class="min-h-screen text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <section class="min-h-screen flex items-center justify-center">
+        <div class="glass rounded-3xl p-12 text-center max-w-4xl mx-6">
+            <h1 class="text-5xl md:text-7xl font-bold mb-8 hero-title">${data.personal.fullName || "Glass Portfolio"}</h1>
+            <p class="text-xl mb-8">${data.personal.title || "Creative Developer"}</p>
+            <p class="text-lg opacity-90 max-w-2xl mx-auto">${data.personal.about || "Beautiful glassmorphism design with modern aesthetics."}</p>
         </div>
-      </nav>
-    </div>
-  </header>
+    </section>
 
-  <!-- Hero -->
-  <section id="hero" class="min-h-[72vh] flex items-center">
-    <div class="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-10 items-center">
-      <div class="space-y-4">
-        <p class="text-sm text-slate-600 uppercase tracking-wide">Glassmorphism Portfolio</p>
-        <h1 class="text-4xl md:text-5xl font-extrabold">${
-          data.personal.fullName || "Your Name"
-        }</h1>
-        <p class="text-lg text-slate-700">${
-          data.personal.title || "Designer & Developer"
-        }</p>
-        <p class="text-base text-slate-600 max-w-2xl">${
-          data.personal.about ||
-          "I craft clean interfaces with soft, tactile UI."
-        }</p>
-        <div class="mt-6 flex gap-4">
-          <a href="#projects" class="px-5 py-3 rounded-lg bg-white/70 backdrop-blur-sm border border-white/40 shadow-sm">View Work</a>
-          <a href="#contact" class="px-5 py-3 rounded-lg border border-white/30 text-slate-800">Contact</a>
-        </div>
-      </div>
-
-      <div class="flex justify-center">
-        ${
-          data.personal.profileImage
-            ? `<div class="w-64 h-64 rounded-3xl overflow-hidden backdrop-blur-md bg-white/40 border border-white/30 shadow-lg"><img src="${
-                data.personal.profileImage
-              }" alt="${
-                data.personal.fullName || "Profile"
-              }" class="w-full h-full object-cover"></div>`
-            : `<div class="w-64 h-64 rounded-3xl bg-white/60 border border-white/30 flex items-center justify-center text-xl">No Image</div>`
-        }
-      </div>
-    </div>
-  </section>
-
-  <!-- Projects -->
-  ${
-    data.projects?.length
-      ? `<section id="projects" class="py-16">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-2xl font-semibold mb-6">Featured Projects</h2>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        ${data.projects
-          .map(
-            (p, i) => `
-          <article class="project-card rounded-2xl overflow-hidden border border-white/30 bg-white/60 backdrop-blur-md p-0 shadow-sm" data-index="${i}">
-            ${
-              p.image
-                ? `<img src="${p.image}" alt="${p.title}" class="w-full h-44 object-cover">`
-                : `<div class="w-full h-44 bg-gradient-to-r from-white/50 to-white/30 flex items-center justify-center text-slate-500">No Image</div>`
-            }
-            <div class="p-5">
-              <h3 class="font-semibold mb-1">${p.title}</h3>
-              <p class="text-sm text-slate-600 mb-3">${p.description}</p>
-              <div class="flex flex-wrap gap-2 mb-3">${p.technologies
-                .split(",")
-                .map(
-                  (t) =>
-                    `<span class="text-xs px-2 py-1 bg-white/40 rounded">${t.trim()}</span>`
-                )
-                .join("")}</div>
-              <div class="flex justify-between items-center">
-                <div class="flex gap-3">
-                  ${
-                    p.github
-                      ? `<a href="${p.github}" target="_blank" class="text-slate-700 text-sm">GitHub</a>`
-                      : ""
-                  }
-                  ${
-                    p.demo
-                      ? `<a href="${p.demo}" target="_blank" class="text-slate-700 text-sm">Live</a>`
-                      : ""
-                  }
-                </div>
-                <button class="preview-btn text-sm px-3 py-1 rounded-lg bg-white/50 border border-white/20">Preview</button>
-              </div>
-            </div>
-          </article>
-        `
-          )
-          .join("")}
-      </div>
-    </div>
-  </section>`
-      : ""
-  }
-
-  <!-- Skills -->
-  ${
-    data.skills?.length
-      ? `<section id="skills" class="py-12">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-2xl font-semibold mb-6">Skills</h2>
-      <div class="grid md:grid-cols-2 gap-4">
-        ${data.skills
-          .map(
-            (s, i) => `
-          <div class="p-4 rounded-lg bg-white/60 border border-white/25 backdrop-blur-sm skill-card">
-            <div class="flex justify-between items-center mb-2">
-              <strong>${s.skill}</strong>
-              <span class="text-sm text-slate-600">${s.level}</span>
-            </div>
-            <div class="w-full bg-white/30 h-2 rounded overflow-hidden">
-              <div class="skill-bar h-2 rounded-full" data-width="${getSkillPercentage(
-                s.level
-              )}"></div>
-            </div>
-          </div>
-        `
-          )
-          .join("")}
-      </div>
-    </div>
-  </section>`
-      : ""
-  }
-
-  <!-- Contact -->
-  <section id="contact" class="py-16">
-    <div class="max-w-6xl mx-auto px-6 text-center">
-      <h2 class="text-2xl font-semibold mb-4">Get in touch</h2>
-      <p class="text-slate-600 mb-6">Reach me at <a href="mailto:${
-        data.personal.email || "contact@example.com"
-      }" class="text-blue-600">${
-    data.personal.email || "contact@example.com"
-  }</a></p>
-      <a href="mailto:${
-        data.personal.email || "contact@example.com"
-      }" class="inline-block px-6 py-3 rounded-lg bg-white/70 border border-white/30">Say Hello</a>
-    </div>
-  </section>
-
-  <footer class="py-10 text-center text-sm text-slate-500">© ${new Date().getFullYear()} ${
-    data.personal.fullName || ""
-  }</footer>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
-</html>`; // end html
+</html>`;
 
-  const css = `/* Glassmorphism helpers (complements Tailwind) */
-.project-card, .skill-card { opacity: 0; transform: translateY(16px); transition: transform .45s cubic-bezier(.2,.9,.3,1), opacity .45s ease; }
-.project-card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 18px 40px rgba(16,24,40,0.06); }
-
-.skill-bar { width: 0; background: linear-gradient(90deg, rgba(99,102,241,0.9), rgba(96,165,250,0.9)); transition: width 1.2s cubic-bezier(.2,.9,.3,1); border-radius: 999px; }
-
-.preview-btn { transition: transform .12s ease, box-shadow .12s ease; }
-.preview-btn:active { transform: translateY(1px); }
-
-/* subtle responsive tweaks */
-@media (max-width: 768px) {
-  .w-64 { width: 16rem; height: 16rem; }
-  h1 { font-size: 1.75rem; }
-}`; // end css
+  const css = `body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.glass { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+.hero-title { opacity: 0; transform: translateY(50px); }`;
 
   const js = `gsap.registerPlugin(ScrollTrigger);
-
-document.addEventListener('DOMContentLoaded', () => {
-  // hero reveal
-  gsap.from('#hero h1, #hero p, .project-card, .skill-card', { opacity: 0, y: 18, duration: 0.8, stagger: 0.06, ease: 'power3.out' });
-
-  // reveal project cards on scroll
-  gsap.utils.toArray('.project-card').forEach((card, i) => {
-    ScrollTrigger.create({
-      trigger: card,
-      start: 'top 92%',
-      onEnter: () => gsap.to(card, { opacity: 1, y: 0, duration: 0.55, delay: i * 0.05, ease: 'back.out(1.2)' })
-    });
-
-    // micro tilt for pointer devices
-    card.addEventListener('pointermove', (ev) => {
-      if (ev.pointerType !== 'mouse') return;
-      const rect = card.getBoundingClientRect();
-      const px = (ev.clientX - rect.left) / rect.width;
-      const py = (ev.clientY - rect.top) / rect.height;
-      const rx = (py - 0.5) * 6;
-      const ry = (px - 0.5) * -6;
-      card.style.transform = \`perspective(900px) rotateX(\${rx}deg) rotateY(\${ry}deg) translateZ(0)\`;
-    });
-    card.addEventListener('pointerleave', () => card.style.transform = '');
-  });
-
-  // animate skill bars when visible
-  gsap.utils.toArray('.skill-bar').forEach(bar => {
-    ScrollTrigger.create({
-      trigger: bar,
-      start: 'top 92%',
-      onEnter: () => {
-        const pct = bar.getAttribute('data-width') || 0;
-        gsap.to(bar, { width: pct + '%', duration: 1.1, ease: 'power2.out' });
-      }
-    });
-  });
-
-  // smooth native anchor scroll fallback
-  document.querySelectorAll('a[href^="#"]').forEach(a => {
-    a.addEventListener('click', (e) => {
-      const href = a.getAttribute('href');
-      if (!href || href === '#') return;
-      const target = document.querySelector(href);
-      if (target) {
-        e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
-  });
-});`; // end js
+gsap.from('.hero-title', { opacity: 0, y: 50, duration: 1.5, ease: 'power3.out' });`;
 
   return { html, css, js };
 }
@@ -2371,357 +2004,56 @@ document.addEventListener('DOMContentLoaded', () => {
 function generateCyberpunkTemplate() {
   const data = portfolioData;
 
-  const html = `<!doctype html>
+  const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>${data.personal.fullName || "Portfolio"} - ${
-    data.personal.title || "Developer"
-  }</title>
-
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- GSAP + ScrollTrigger -->
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${data.personal.fullName || "Portfolio"} - Cyberpunk</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="antialiased bg-[#05020a] text-slate-100">
-
-  <!-- neon grid / scanlines canvas behind content -->
-  <canvas id="cyber-bg" class="fixed inset-0 -z-10 w-full h-full"></canvas>
-
-  <!-- top bar -->
-  <nav class="fixed w-full top-0 left-0 z-50">
-    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-      <div class="font-semibold text-lg tracking-wider text-[#f0f] drop-shadow-[0_4px_12px_rgba(255,0,255,0.12)]">${
-        data.personal.fullName || "Portfolio"
-      }</div>
-      <div class="hidden md:flex gap-6 text-sm text-slate-300/80">
-        <a href="#hero" class="hover:text-[#06f6f6]">Home</a>
-        <a href="#projects" class="hover:text-[#f0f]">Projects</a>
-        <a href="#skills" class="hover:text-[#06f6f6]">Skills</a>
-        <a href="#contact" class="hover:text-[#f0f]">Contact</a>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Hero -->
-  <header id="hero" class="min-h-screen flex items-center pt-24">
-    <div class="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
-      <div>
-        <p class="text-xs text-[#06f6f6]/75 uppercase tracking-widest mb-3">Cyberpunk Portfolio</p>
-        <h1 class="text-5xl md:text-6xl font-extrabold leading-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#06f6f6] to-[#ff2dd4]">${
-          data.personal.fullName || "Your Name"
-        }</h1>
-        <p class="text-xl text-slate-300 mb-6">${
-          data.personal.title || "Frontend Engineer"
-        }</p>
-        <p class="text-base text-slate-400 max-w-2xl mb-8">${
-          data.personal.about ||
-          "Building neon interfaces and hi-performance apps."
-        }</p>
-
-        <div class="flex gap-4">
-          <a href="#projects" class="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-[#06f6f6] to-[#ff2dd4] text-black shadow-2xl transform hover:scale-105">View Work</a>
-          <a href="#contact" class="inline-flex items-center gap-3 px-6 py-3 rounded-full border border-[#2a2a44] text-[#a0a0b2]">Contact</a>
+<body class="bg-slate-900 text-cyan-400 min-h-screen font-mono">
+    <section class="min-h-screen flex items-center justify-center">
+        <div class="text-center">
+            <h1 class="text-6xl md:text-8xl font-bold mb-8 glitch hero-glitch" data-text="${data.personal.fullName || "CYBER.EXE"}">${data.personal.fullName || "CYBER.EXE"}</h1>
+            <p class="text-xl mb-8 text-green-400">${data.personal.title || "> HACKING_THE_MATRIX.EXE"}</p>
+            <div class="border border-cyan-400 p-4 max-w-2xl mx-auto">
+                <p class="text-sm">${data.personal.about || "> Connecting to neural network... \\n> Initializing cyberpunk portfolio... \\n> Welcome to the future."}</p>
+            </div>
         </div>
+    </section>
 
-        <div class="mt-6 flex gap-3 text-xs text-slate-400">
-          ${
-            data.social
-              ? Object.entries(data.social)
-                  .map(([k, v]) =>
-                    v
-                      ? `<a href="${v}" target="_blank" class="px-2 py-1 rounded bg-white/3">${k}</a>`
-                      : ""
-                  )
-                  .join("")
-              : ""
-          }
-        </div>
-      </div>
-
-      <div class="flex justify-center">
-        ${
-          data.personal.profileImage
-            ? `<img src="${data.personal.profileImage}" alt="${
-                data.personal.fullName || "Profile"
-              }" class="w-64 h-64 rounded-2xl object-cover cyber-avatar">`
-            : `<div class="w-64 h-64 rounded-2xl bg-gradient-to-tr from-[#111018] to-[#1b0826] flex items-center justify-center text-2xl font-semibold">👾</div>`
-        }
-      </div>
-    </div>
-  </header>
-
-  <!-- Projects -->
-  ${
-    data.projects?.length
-      ? `<section id="projects" class="py-16">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-3xl font-bold mb-8 text-[#f0f]">Featured Projects</h2>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        ${data.projects
-          .map(
-            (p, i) => `
-          <article class="project-card relative rounded-xl overflow-hidden border border-white/6 bg-gradient-to-b from-[#071025]/40 to-[#050119]/30 p-0" data-index="${i}">
-            ${
-              p.image
-                ? `<img src="${p.image}" alt="${p.title}" class="w-full h-44 object-cover">`
-                : `<div class="w-full h-44 bg-gradient-to-r from-[#0b0b14] to-[#071026] flex items-center justify-center text-slate-400">No Image</div>`
-            }
-            <div class="p-5">
-              <h3 class="font-semibold text-lg mb-2 text-[#e6e6ff]">${
-                p.title
-              }</h3>
-              <p class="text-sm text-slate-400 mb-3">${p.description}</p>
-              <div class="flex flex-wrap gap-2 mb-3">${p.technologies
-                .split(",")
-                .map(
-                  (t) =>
-                    `<span class="text-xs px-2 py-1 bg-white/5 rounded">${t.trim()}</span>`
-                )
-                .join("")}</div>
-              <div class="flex justify-between items-center">
-                <div class="flex gap-2">
-                  ${
-                    p.github
-                      ? `<a href="${p.github}" class="text-[#06f6f6] text-sm" target="_blank">GitHub</a>`
-                      : ""
-                  }
-                  ${
-                    p.demo
-                      ? `<a href="${p.demo}" class="text-[#ff2dd4] text-sm" target="_blank">Live</a>`
-                      : ""
-                  }
-                </div>
-                <button class="preview-btn text-sm px-3 py-1 rounded bg-transparent border border-[#222233] text-[#aab]">Preview</button>
-              </div>
-            </div>
-          </article>
-        `
-          )
-          .join("")}
-      </div>
-    </div>
-  </section>`
-      : ""
-  }
-
-  <!-- Skills -->
-  ${
-    data.skills?.length
-      ? `<section id="skills" class="py-12">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-2xl font-bold mb-6 text-[#06f6f6]">Skills</h2>
-      <div class="grid md:grid-cols-2 gap-4">
-        ${data.skills
-          .map(
-            (s, i) => `
-          <div class="p-4 rounded-lg bg-[#070617]/60 border border-white/6 skill-card">
-            <div class="flex justify-between items-center mb-2">
-              <strong class="text-slate-100">${s.skill}</strong>
-              <span class="text-xs text-slate-300">${s.level}</span>
-            </div>
-            <div class="w-full bg-white/6 h-2 rounded overflow-hidden">
-              <div class="skill-bar h-2" data-width="${getSkillPercentage(
-                s.level
-              )}"></div>
-            </div>
-          </div>
-        `
-          )
-          .join("")}
-      </div>
-    </div>
-  </section>`
-      : ""
-  }
-
-  <!-- Contact -->
-  <section id="contact" class="py-16">
-    <div class="max-w-6xl mx-auto px-6 text-center">
-      <h2 class="text-3xl font-bold mb-4 text-[#ff2dd4]">Let's build the future</h2>
-      <p class="text-slate-400 mb-6">Reach me at <a href="mailto:${
-        data.personal.email || "contact@example.com"
-      }" class="text-[#06f6f6]">${
-    data.personal.email || "contact@example.com"
-  }</a></p>
-      <a href="mailto:${
-        data.personal.email || "contact@example.com"
-      }" class="inline-block px-6 py-3 rounded-full bg-gradient-to-r from-[#06f6f6] to-[#ff2dd4] text-black">Say Hello</a>
-    </div>
-  </section>
-
-  <footer class="py-8 text-center text-sm text-slate-400">© ${new Date().getFullYear()} ${
-    data.personal.fullName || "Portfolio"
-  }</footer>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
-</html>`; // end html
+</html>`;
 
-  const css = `/* Cyberpunk / Neon helpers */
-:root{
-  --neon-cyan:#06f6f6;
-  --neon-mag:#ff2dd4;
-  --card-bg: rgba(8,6,18,0.6);
-}
-
-body { background-color: #05020a; }
-
-/* avatar */
-.cyber-avatar{
-  border-radius: 14px;
-  box-shadow: 0 12px 40px rgba(255,0,255,0.06), 0 6px 20px rgba(6,246,246,0.04);
-  transition: transform .35s cubic-bezier(.2,.9,.3,1);
-}
-.cyber-avatar:hover { transform: translateY(-6px) scale(1.03); }
-
-/* cards */
-.project-card { opacity: 0; transform: translateY(22px) scale(.995); transition: all .5s cubic-bezier(.2,.9,.3,1); border-radius: 12px; overflow: hidden; }
-.project-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 30px 80px rgba(6,246,246,0.04); }
-
-/* skills */
-.skill-card { opacity: 0; transform: translateY(16px); transition: all .45s ease; border-radius: 10px; }
-.skill-bar { width: 0; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-mag)); transition: width 1.3s cubic-bezier(.2,.9,.3,1); height: 100%; border-radius: 999px; }
-
-/* preview button */
-.preview-btn { transition: transform .12s ease, box-shadow .12s ease; }
-.preview-btn:active { transform: translateY(1px); }
-
-/* responsive */
-@media (max-width:768px){
-  .cyber-avatar{ width: 200px; height: 200px; }
-  h1{ font-size: 2rem; }
-}
-
-/* small flicker/glitch for headings */
-@keyframes cyber-flicker {
-  0%{ opacity:1; filter: hue-rotate(0deg); }
-  6%{ opacity:.85; filter: hue-rotate(8deg); }
-  9%{ opacity:1; filter: hue-rotate(-6deg); }
-  12%{ opacity:.92; filter: hue-rotate(3deg); }
-  100%{ opacity:1; filter: none; }
-}
-#hero h1 { animation: cyber-flicker 6s linear infinite; }`;
+  const css = `.glitch { position: relative; }
+.glitch::before { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+                 background: #0f172a; color: #06b6d4; z-index: -1; animation: glitch1 0.3s infinite; }
+@keyframes glitch1 { 0%, 100% { transform: translate(0); } 20% { transform: translate(-2px, 2px); } 
+                    40% { transform: translate(-2px, -2px); } 60% { transform: translate(2px, 2px); } 
+                    80% { transform: translate(2px, -2px); } }
+.hero-glitch { opacity: 0; transform: scale(0.8); }`;
 
   const js = `gsap.registerPlugin(ScrollTrigger);
 
-document.addEventListener('DOMContentLoaded', () => {
-  // hero entrance
-  gsap.from('#hero h1, #hero p, .cyber-avatar', { opacity: 0, y: 28, duration: 0.9, stagger: 0.08, ease: 'power3.out' });
-
-  // reveal project cards
-  gsap.utils.toArray('.project-card').forEach((card, i) => {
-    ScrollTrigger.create({
-      trigger: card,
-      start: 'top 92%',
-      onEnter: () => gsap.to(card, { opacity: 1, y: 0, duration: 0.6, delay: i * 0.05, ease: 'back.out(1.3)' })
-    });
-
-    // tilt effect on pointer
-    card.addEventListener('pointermove', (ev) => {
-      if (ev.pointerType !== 'mouse') return;
-      const rect = card.getBoundingClientRect();
-      const px = (ev.clientX - rect.left) / rect.width;
-      const py = (ev.clientY - rect.top) / rect.height;
-      const rx = (py - 0.5) * 6;
-      const ry = (px - 0.5) * -6;
-      card.style.transform = \`perspective(900px) rotateX(\${rx}deg) rotateY(\${ry}deg) translateZ(0)\`;
-    });
-    card.addEventListener('pointerleave', () => { card.style.transform = ''; });
-  });
-
-  // animate skill bars
-  gsap.utils.toArray('.skill-bar').forEach(bar => {
-    ScrollTrigger.create({
-      trigger: bar,
-      start: 'top 92%',
-      onEnter: () => {
-        const pct = bar.getAttribute('data-width') || 0;
-        gsap.to(bar, { width: pct + '%', duration: 1.3, ease: 'power2.out' });
-      }
-    });
-  });
-
-  // smooth anchors
-  document.querySelectorAll('a[href^="#"]').forEach(a => {
-    a.addEventListener('click', (e) => {
-      const href = a.getAttribute('href');
-      if (!href || href === '#') return;
-      const target = document.querySelector(href);
-      if (target) {
-        e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
-  });
-
-  // cyber background canvas: subtle grid + scanning line
-  (function initCanvasBg(){
-    const canvas = document.getElementById('cyber-bg');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let w = canvas.width = innerWidth;
-    let h = canvas.height = innerHeight;
-    window.addEventListener('resize', () => { w = canvas.width = innerWidth; h = canvas.height = innerHeight; });
-
-    // create grid points
-    const gridSize = 80;
-    const points = [];
-    for (let x = 0; x < w; x += gridSize) {
-      for (let y = 0; y < h; y += gridSize) {
-        points.push({ x: x + Math.random()*12, y: y + Math.random()*12, op: Math.random()*0.12 + 0.02 });
-      }
+gsap.from('.hero-glitch', { 
+    opacity: 0, 
+    scale: 0.8, 
+    duration: 2, 
+    ease: 'power3.out',
+    onComplete: () => {
+        gsap.to('.hero-glitch', {
+            x: () => Math.random() * 4 - 2,
+            duration: 0.1,
+            repeat: -1,
+            yoyo: true
+        });
     }
-
-    let scanY = h * 0.25;
-    function draw(){
-      ctx.clearRect(0,0,w,h);
-
-      // faint background tint
-      ctx.fillStyle = 'rgba(2,2,6,0.6)';
-      ctx.fillRect(0,0,w,h);
-
-      // draw grid dots
-      points.forEach(p => {
-        ctx.beginPath();
-        ctx.fillStyle = 'rgba(6,246,246,' + p.op + ')';
-        ctx.arc(p.x, p.y, 1.2, 0, Math.PI*2);
-        ctx.fill();
-      });
-
-      // horizontal scanline
-      const gradient = ctx.createLinearGradient(0, scanY-60, 0, scanY+60);
-      gradient.addColorStop(0, 'rgba(255,45,212,0)');
-      gradient.addColorStop(0.4, 'rgba(255,45,212,0.05)');
-      gradient.addColorStop(0.5, 'rgba(6,246,246,0.06)');
-      gradient.addColorStop(0.6, 'rgba(255,45,212,0.05)');
-      gradient.addColorStop(1, 'rgba(255,45,212,0)');
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, scanY-80, w, 160);
-
-      // subtle vignette lines
-      ctx.beginPath();
-      ctx.strokeStyle = 'rgba(255,255,255,0.02)';
-      for (let i=0;i<w;i+=160){
-        ctx.moveTo(i,0); ctx.lineTo(i+40, h);
-      }
-      ctx.stroke();
-
-      // animate
-      scanY += 0.9;
-      if (scanY > h + 60) scanY = -60;
-      requestAnimationFrame(draw);
-    }
-    draw();
-  })();
-
-});`; // end js
+});`;
 
   return { html, css, js };
 }
@@ -2730,296 +2062,50 @@ document.addEventListener('DOMContentLoaded', () => {
 function generateGradientTemplate() {
   const data = portfolioData;
 
-  const html = `<!doctype html>
+  const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>${data.personal.fullName || "Portfolio"}${
-    data.personal.title ? " — " + data.personal.title : ""
-  }</title>
-
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- GSAP + ScrollTrigger -->
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${data.personal.fullName || "Portfolio"} - Gradient Paradise</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="antialiased bg-gradient-to-br from-white via-sky-50 to-rose-50 text-slate-900">
-
-  <!-- subtle animated gradient blobs -->
-  <div aria-hidden="true" class="fixed inset-0 -z-10 overflow-hidden">
-    <div class="absolute left-0 top-0 w-[420px] h-[420px] transform -translate-x-1/3 -translate-y-1/4 opacity-60 gradient-blob-1"></div>
-    <div class="absolute right-0 bottom-0 w-[520px] h-[520px] transform translate-x-1/4 translate-y-1/6 opacity-55 gradient-blob-2"></div>
-  </div>
-
-  <!-- Header -->
-  <header class="sticky top-4 z-40">
-    <div class="max-w-6xl mx-auto px-6">
-      <nav class="flex items-center justify-between bg-white/60 backdrop-blur-md rounded-2xl p-3 shadow-sm border border-white/30">
-        <div class="text-lg font-semibold tracking-tight">${
-          data.personal.fullName || "Your Name"
-        }</div>
-        <div class="hidden md:flex gap-6 text-sm">
-          <a href="#hero" class="hover:underline">Home</a>
-          <a href="#projects" class="hover:underline">Projects</a>
-          <a href="#skills" class="hover:underline">Skills</a>
-          <a href="#contact" class="hover:underline">Contact</a>
+<body class="gradient-bg min-h-screen text-white">
+    <section class="min-h-screen flex items-center justify-center">
+        <div class="text-center">
+            <h1 class="text-6xl md:text-8xl font-bold mb-8 text-gradient hero-gradient">${data.personal.fullName || "Gradient Magic"}</h1>
+            <p class="text-xl mb-8 bg-white/20 backdrop-blur-md rounded-full px-8 py-4 inline-block">
+                ${data.personal.title || "Designer & Developer"}
+            </p>
+            <p class="text-lg max-w-2xl mx-auto bg-white/10 backdrop-blur-md rounded-2xl p-6">
+                ${data.personal.about || "Creating beautiful gradients and smooth animations that bring websites to life."}
+            </p>
         </div>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Hero -->
-  <main>
-    <section id="hero" class="min-h-[70vh] flex items-center">
-      <div class="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
-        <div>
-          <p class="text-sm uppercase tracking-wide text-indigo-600/80 mb-3">Gradient Portfolio</p>
-          <h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-4">${
-            data.personal.fullName || "Your Name"
-          }</h1>
-          <p class="text-lg text-slate-700 mb-6">${
-            data.personal.title || "Developer & Designer"
-          }</p>
-          <p class="text-base text-slate-600 max-w-2xl mb-8">${
-            data.personal.about ||
-            "I design and build delightful gradient-first interfaces."
-          }</p>
-
-          <div class="flex gap-4">
-            <a href="#projects" class="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-rose-500 text-white shadow-lg transform hover:scale-105">View Work</a>
-            <a href="#contact" class="inline-flex items-center gap-3 px-6 py-3 rounded-full border border-white/30 bg-white/60 text-slate-800">Contact</a>
-          </div>
-        </div>
-
-        <div class="flex justify-center">
-          ${
-            data.personal.profileImage
-              ? `<img src="${data.personal.profileImage}" alt="${
-                  data.personal.fullName || "Profile"
-                }" class="w-64 h-64 rounded-2xl object-cover gradient-avatar shadow-2xl">`
-              : `<div class="w-64 h-64 rounded-2xl bg-gradient-to-tr from-indigo-100 to-rose-100 flex items-center justify-center text-2xl font-semibold">Hi 👋</div>`
-          }
-        </div>
-      </div>
     </section>
 
-    <!-- Projects -->
-    ${
-      data.projects?.length
-        ? `<section id="projects" class="py-16">
-      <div class="max-w-6xl mx-auto px-6">
-        <h2 class="text-3xl font-bold mb-8">Projects</h2>
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          ${data.projects
-            .map(
-              (p, i) => `
-            <article class="project-card rounded-2xl overflow-hidden p-0 shadow-sm transform-gpu will-change-transform bg-white" data-index="${i}">
-              ${
-                p.image
-                  ? `<img src="${p.image}" alt="${p.title}" class="w-full h-44 object-cover">`
-                  : `<div class="w-full h-44 bg-gradient-to-r from-indigo-50 to-rose-50 flex items-center justify-center text-slate-500">No Image</div>`
-              }
-              <div class="p-5">
-                <h3 class="font-semibold text-lg mb-2">${p.title}</h3>
-                <p class="text-sm text-slate-600 mb-3">${p.description}</p>
-                <div class="flex flex-wrap gap-2 mb-3">${p.technologies
-                  .split(",")
-                  .map(
-                    (t) =>
-                      `<span class="text-xs px-2 py-1 bg-slate-100 rounded">${t.trim()}</span>`
-                  )
-                  .join("")}</div>
-                <div class="flex justify-between items-center">
-                  <div class="flex gap-2">
-                    ${
-                      p.github
-                        ? `<a href="${p.github}" target="_blank" class="text-indigo-600 text-sm">GitHub</a>`
-                        : ""
-                    }
-                    ${
-                      p.demo
-                        ? `<a href="${p.demo}" target="_blank" class="text-indigo-600 text-sm">Live</a>`
-                        : ""
-                    }
-                  </div>
-                  <button class="preview-btn text-sm px-3 py-1 rounded-full bg-gradient-to-r from-indigo-100 to-rose-100">Preview</button>
-                </div>
-              </div>
-            </article>
-          `
-            )
-            .join("")}
-        </div>
-      </div>
-    </section>`
-        : ""
-    }
-
-    <!-- Skills -->
-    ${
-      data.skills?.length
-        ? `<section id="skills" class="py-12">
-      <div class="max-w-6xl mx-auto px-6">
-        <h2 class="text-2xl font-semibold mb-6">Skills</h2>
-        <div class="grid md:grid-cols-2 gap-4">
-          ${data.skills
-            .map(
-              (s, i) => `
-            <div class="p-4 rounded-lg bg-white/70 border border-white/30 skill-card">
-              <div class="flex justify-between items-center mb-2">
-                <strong>${s.skill}</strong>
-                <span class="text-sm text-slate-600">${s.level}</span>
-              </div>
-              <div class="w-full bg-slate-100 h-2 rounded overflow-hidden">
-                <div class="skill-bar h-2 rounded-full" data-width="${getSkillPercentage(
-                  s.level
-                )}"></div>
-              </div>
-            </div>
-          `
-            )
-            .join("")}
-        </div>
-      </div>
-    </section>`
-        : ""
-    }
-
-    <!-- Contact -->
-    <section id="contact" class="py-16">
-      <div class="max-w-6xl mx-auto px-6 text-center">
-        <h2 class="text-3xl font-bold mb-4">Get in touch</h2>
-        <p class="text-slate-600 mb-6">Say hello — <a href="mailto:${
-          data.personal.email || "contact@example.com"
-        }" class="text-indigo-600">${
-    data.personal.email || "contact@example.com"
-  }</a></p>
-        <a href="mailto:${
-          data.personal.email || "contact@example.com"
-        }" class="inline-block px-6 py-3 rounded-full bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-rose-500 text-white">Let's Talk</a>
-      </div>
-    </section>
-  </main>
-
-  <footer class="py-8 text-center text-sm text-slate-500">© ${new Date().getFullYear()} ${
-    data.personal.fullName || "Portfolio"
-  }</footer>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
-</html>`; // end html
+</html>`;
 
-  const css = `/* Gradient theme extras (complements Tailwind) */
-
-.gradient-blob-1 {
-  background: radial-gradient(circle at 20% 20%, rgba(99,102,241,0.28), transparent 30%),
-              conic-gradient(from 200deg, rgba(236,72,153,0.14), rgba(139,92,246,0.12));
-  border-radius: 50%;
-  filter: blur(48px);
-  transform-origin: center;
-  transition: transform 0.9s ease;
-}
-.gradient-blob-2 {
-  background: radial-gradient(circle at 80% 80%, rgba(16,185,129,0.18), transparent 30%),
-              linear-gradient(120deg, rgba(99,102,241,0.08), rgba(236,72,153,0.06));
-  border-radius: 50%;
-  filter: blur(64px);
-  transition: transform 0.9s ease;
-}
-
-.gradient-avatar {
-  border-radius: 14px;
-  transition: transform .45s cubic-bezier(.2,.9,.3,1), box-shadow .35s ease;
-}
-.gradient-avatar:hover {
-  transform: translateY(-8px) scale(1.03);
-  box-shadow: 0 18px 50px rgba(99,102,241,0.12);
-}
-
-.project-card { opacity: 0; transform: translateY(18px) scale(.995); transition: all .5s cubic-bezier(.2,.9,.3,1); border-radius: 14px; overflow: hidden; }
-.project-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 24px 60px rgba(99,102,241,0.06); }
-
-.skill-card { opacity: 0; transform: translateY(12px); transition: all .5s ease; }
-.skill-bar { width: 0; background: linear-gradient(90deg, #6366f1, #ec4899); transition: width 1.3s cubic-bezier(.2,.9,.3,1); height: 100%; border-radius: 999px; }
-
-.preview-btn { transition: transform .12s ease, box-shadow .12s ease; }
-.preview-btn:active { transform: translateY(1px); }
-
-/* Responsive tweaks */
-@media (max-width: 768px) {
-  .gradient-avatar { width: 14rem; height: 14rem; }
-  h1 { font-size: 1.75rem; }
-}
-`;
+  const css = `.gradient-bg { background: linear-gradient(45deg, #fa709a 0%, #fee140 100%); 
+              background-size: 200% 200%; animation: gradientShift 5s ease infinite; }
+@keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+.text-gradient { background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4); 
+                -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 300% 300%; 
+                animation: gradientShift 3s ease infinite; }
+.hero-gradient { opacity: 0; transform: scale(0.5) rotate(-15deg); }`;
 
   const js = `gsap.registerPlugin(ScrollTrigger);
 
-document.addEventListener('DOMContentLoaded', () => {
-  // Blob gentle motion
-  gsap.to('.gradient-blob-1', { x: -30, y: 20, scale: 1.05, repeat: -1, yoyo: true, duration: 6, ease: 'sine.inOut' });
-  gsap.to('.gradient-blob-2', { x: 40, y: -24, scale: 1.02, repeat: -1, yoyo: true, duration: 7.5, ease: 'sine.inOut' });
-
-  // Hero reveal
-  gsap.from('#hero h1, #hero p, .gradient-avatar', { opacity: 0, y: 20, duration: 0.9, stagger: 0.08, ease: 'power3.out' });
-
-  // Reveal project cards & subtle stagger
-  gsap.utils.toArray('.project-card').forEach((card, i) => {
-    ScrollTrigger.create({
-      trigger: card,
-      start: 'top 92%',
-      onEnter: () => {
-        gsap.to(card, { opacity: 1, y: 0, duration: 0.6, delay: i * 0.05, ease: 'back.out(1.2)' });
-      }
-    });
-
-    // tilt on pointer
-    card.addEventListener('pointermove', (ev) => {
-      if (ev.pointerType !== 'mouse') return;
-      const rect = card.getBoundingClientRect();
-      const px = (ev.clientX - rect.left) / rect.width;
-      const py = (ev.clientY - rect.top) / rect.height;
-      const rx = (py - 0.5) * 6;
-      const ry = (px - 0.5) * -6;
-      card.style.transform = \`perspective(900px) rotateX(\${rx}deg) rotateY(\${ry}deg) translateZ(0)\`;
-    });
-    card.addEventListener('pointerleave', () => { card.style.transform = ''; });
-  });
-
-  // Animate skill bars when visible
-  gsap.utils.toArray('.skill-bar').forEach(bar => {
-    ScrollTrigger.create({
-      trigger: bar,
-      start: 'top 92%',
-      onEnter: () => {
-        const pct = bar.getAttribute('data-width') || 0;
-        gsap.to(bar, { width: pct + '%', duration: 1.2, ease: 'power2.out' });
-      }
-    });
-  });
-
-  // Smooth anchors
-  document.querySelectorAll('a[href^="#"]').forEach(a => {
-    a.addEventListener('click', (e) => {
-      const href = a.getAttribute('href');
-      if (!href || href === '#') return;
-      const target = document.querySelector(href);
-      if (target) {
-        e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
-  });
-
-  // small micro-interaction for preview buttons
-  document.querySelectorAll('.preview-btn').forEach(btn => {
-    btn.addEventListener('mouseenter', () => gsap.to(btn, { scale: 1.06, duration: 0.12 }));
-    btn.addEventListener('mouseleave', () => gsap.to(btn, { scale: 1, duration: 0.12 }));
-  });
+gsap.from('.hero-gradient', { 
+    opacity: 0, 
+    scale: 0.5, 
+    rotation: -15,
+    duration: 2, 
+    ease: 'back.out(1.7)' 
 });`;
 
   return { html, css, js };
@@ -3029,491 +2115,121 @@ document.addEventListener('DOMContentLoaded', () => {
 function generateParticleTemplate() {
   const data = portfolioData;
 
-  const html = `<!doctype html>
+  const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>${data.personal.fullName || "Portfolio"}${
-    data.personal.title ? " — " + data.personal.title : ""
-  }</title>
-
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- GSAP -->
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-
-  <!-- Particles.js -->
-  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${data.personal.fullName || "Portfolio"} - Particle Nexus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="relative bg-slate-900 text-white">
-  <!-- Particle background -->
-  <div id="particles-js" class="absolute inset-0 -z-10"></div>
+<body class="bg-gray-900 text-white min-h-screen overflow-x-hidden" style="background: #0f0f23;">
+    <canvas id="particles" class="fixed inset-0 z-0"></canvas>
+    
+    <section class="min-h-screen flex items-center justify-center relative z-10">
+        <div class="text-center">
+            <h1 class="text-6xl md:text-8xl font-bold mb-8 hero-particle" style="color: #6366f1;">${data.personal.fullName || "Particle Master"}</h1>
+            <p class="text-xl mb-8 text-indigo-300">${data.personal.title || "Interactive Developer"}</p>
+            <p class="text-lg max-w-2xl mx-auto text-gray-300">
+                ${data.personal.about || "Crafting interactive experiences with particle systems and smooth animations."}
+            </p>
+        </div>
+    </section>
 
-  <!-- Header -->
-  <header class="py-6 fixed w-full top-0 bg-slate-900/70 backdrop-blur-sm border-b border-white/10 z-50">
-    <div class="max-w-6xl mx-auto px-6 flex justify-between items-center">
-      <h1 class="font-bold text-lg">${
-        data.personal.fullName || "Your Name"
-      }</h1>
-      <nav class="flex gap-6 text-sm">
-        <a href="#hero" class="hover:text-cyan-400">Home</a>
-        <a href="#projects" class="hover:text-cyan-400">Projects</a>
-        <a href="#skills" class="hover:text-cyan-400">Skills</a>
-        <a href="#contact" class="hover:text-cyan-400">Contact</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Hero -->
-  <section id="hero" class="min-h-screen flex items-center justify-center text-center px-6">
-    <div>
-      <h2 class="text-4xl md:text-6xl font-extrabold mb-4">${
-        data.personal.fullName || "Your Name"
-      }</h2>
-      <p class="text-xl text-cyan-300 mb-6">${
-        data.personal.title || "Creative Developer"
-      }</p>
-      <p class="max-w-xl mx-auto text-slate-300">${
-        data.personal.about ||
-        "I create interactive experiences with modern web technologies."
-      }</p>
-    </div>
-  </section>
-
-  <!-- Projects -->
-  ${
-    data.projects?.length
-      ? `<section id="projects" class="py-20 bg-slate-900/80">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-2xl font-semibold mb-8">Projects</h2>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        ${data.projects
-          .map(
-            (p) => `
-          <div class="p-4 bg-slate-800/70 border border-white/10 rounded-lg hover:border-cyan-400 transition">
-            ${
-              p.image
-                ? `<img src="${p.image}" class="w-full h-40 object-cover rounded mb-4">`
-                : ""
-            }
-            <h3 class="font-semibold mb-2">${p.title}</h3>
-            <p class="text-sm text-slate-300 mb-3">${p.description}</p>
-            <div class="flex flex-wrap gap-2 mb-4">
-              ${p.technologies
-                .split(",")
-                .map(
-                  (t) =>
-                    `<span class="px-2 py-1 bg-slate-700 rounded text-xs">${t.trim()}</span>`
-                )
-                .join("")}
-            </div>
-            <div class="flex gap-4 text-sm">
-              ${
-                p.github
-                  ? `<a href="${p.github}" target="_blank" class="hover:text-cyan-400">GitHub</a>`
-                  : ""
-              }
-              ${
-                p.demo
-                  ? `<a href="${p.demo}" target="_blank" class="hover:text-cyan-400">Live</a>`
-                  : ""
-              }
-            </div>
-          </div>
-        `
-          )
-          .join("")}
-      </div>
-    </div>
-  </section>`
-      : ""
-  }
-
-  <!-- Skills -->
-  ${
-    data.skills?.length
-      ? `<section id="skills" class="py-20 bg-slate-900/90">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-2xl font-semibold mb-8">Skills</h2>
-      <div class="grid md:grid-cols-2 gap-6">
-        ${data.skills
-          .map(
-            (s) => `
-          <div>
-            <div class="flex justify-between mb-1">
-              <span>${s.skill}</span>
-              <span class="text-sm text-slate-400">${s.level}</span>
-            </div>
-            <div class="h-2 bg-slate-700 rounded">
-              <div class="bg-cyan-400 h-2 rounded" style="width:${getSkillPercentage(
-                s.level
-              )}%"></div>
-            </div>
-          </div>
-        `
-          )
-          .join("")}
-      </div>
-    </div>
-  </section>`
-      : ""
-  }
-
-  <!-- Contact -->
-  <section id="contact" class="py-20 bg-slate-900/80">
-    <div class="max-w-6xl mx-auto px-6 text-center">
-      <h2 class="text-2xl font-semibold mb-4">Get in touch</h2>
-      <p class="text-slate-300 mb-6">Email me at <a href="mailto:${
-        data.personal.email || "contact@example.com"
-      }" class="text-cyan-400">${
-    data.personal.email || "contact@example.com"
-  }</a></p>
-      <a href="mailto:${
-        data.personal.email || "contact@example.com"
-      }" class="px-6 py-3 border border-cyan-400 text-cyan-400 rounded-lg hover:bg-cyan-400 hover:text-slate-900 transition">Say Hello</a>
-    </div>
-  </section>
-
-  <footer class="py-10 text-center text-sm text-slate-500">© ${new Date().getFullYear()} ${
-    data.personal.fullName || ""
-  }</footer>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>`;
 
-  const css = `/* Particle background container */
-#particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: transparent; }
+  const css = `#particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: transparent; }
+.hero-particle { opacity: 0; transform: translateY(100px); }
 html { scroll-behavior: smooth; }`;
 
-  const js = `// Init particles.js
-particlesJS("particles-js", {
-  particles: {
-    number: { value: 80 },
-    color: { value: "#00ffff" },
-    shape: { type: "circle" },
-    opacity: { value: 0.5 },
-    size: { value: 3 },
-    line_linked: { enable: true, distance: 150, color: "#00ffff", opacity: 0.4, width: 1 },
-    move: { enable: true, speed: 2 }
-  },
-  interactivity: {
-    detect_on: "canvas",
-    events: {
-      onhover: { enable: true, mode: "repulse" },
-      onclick: { enable: true, mode: "push" }
-    },
-    modes: { repulse: { distance: 100 }, push: { particles_nb: 4 } }
-  },
-  retina_detect: true
+  const js = `gsap.registerPlugin(ScrollTrigger);
+
+// Particle system
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 2;
+        this.vy = (Math.random() - 0.5) * 2;
+        this.radius = Math.random() * 2 + 1;
+    }
+    
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+    }
+    
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = '#6366f1';
+        ctx.fill();
+    }
+}
+
+for (let i = 0; i < 100; i++) {
+    particles.push(new Particle());
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+    });
+    
+    // Draw connections
+    particles.forEach((particle, i) => {
+        particles.slice(i + 1).forEach(other => {
+            const dx = particle.x - other.x;
+            const dy = particle.y - other.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < 150) {
+                ctx.beginPath();
+                ctx.moveTo(particle.x, particle.y);
+                ctx.lineTo(other.x, other.y);
+                ctx.strokeStyle = \`rgba(99, 102, 241, \${0.3 * (1 - distance / 150)})\`;
+                ctx.stroke();
+            }
+        });
+    });
+    
+    requestAnimationFrame(animate);
+}
+
+animate();
+
+// Hero animation
+gsap.from('.hero-particle', { 
+    opacity: 0, 
+    y: 100, 
+    duration: 2, 
+    ease: 'power3.out' 
 });
 
-// GSAP animations
-gsap.registerPlugin(ScrollTrigger);
-gsap.utils.toArray('section').forEach(section => {
-  gsap.from(section, {
-    opacity: 0,
-    y: 50,
-    duration: 0.6,
-    scrollTrigger: { trigger: section, start: "top 80%" }
-  });
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 });`;
 
   return { html, css, js };
-}
-
-function generateAuroraTemplate() {
-  const data = portfolioData;
-
-  const html = `<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>${data.personal.fullName || "Portfolio"}${data.personal.title ? ' — ' + data.personal.title : ''}</title>
-
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- GSAP -->
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body class="relative bg-slate-900 text-white overflow-x-hidden">
-  <!-- Aurora background -->
-  <div class="aurora absolute inset-0 -z-10"></div>
-
-  <!-- Header -->
-  <header class="py-6 fixed w-full top-0 bg-slate-900/50 backdrop-blur-sm border-b border-white/10 z-50">
-    <div class="max-w-6xl mx-auto px-6 flex justify-between items-center">
-      <h1 class="font-bold text-lg">${data.personal.fullName || 'Your Name'}</h1>
-      <nav class="flex gap-6 text-sm">
-        <a href="#hero" class="hover:text-pink-300">Home</a>
-        <a href="#projects" class="hover:text-pink-300">Projects</a>
-        <a href="#skills" class="hover:text-pink-300">Skills</a>
-        <a href="#contact" class="hover:text-pink-300">Contact</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Hero -->
-  <section id="hero" class="min-h-screen flex items-center justify-center text-center px-6">
-    <div>
-      <h2 class="text-4xl md:text-6xl font-extrabold mb-4">${data.personal.fullName || 'Your Name'}</h2>
-      <p class="text-xl text-pink-300 mb-6">${data.personal.title || 'Creative Developer'}</p>
-      <p class="max-w-xl mx-auto text-slate-300">${data.personal.about || 'I create interactive experiences with modern web technologies.'}</p>
-    </div>
-  </section>
-
-  <!-- Projects -->
-  ${ data.projects?.length ? `<section id="projects" class="py-20 bg-slate-900/70">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-2xl font-semibold mb-8">Projects</h2>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        ${data.projects.map(p => `
-          <div class="p-4 bg-slate-800/70 border border-white/10 rounded-lg hover:border-pink-300 transition">
-            ${p.image ? `<img src="${p.image}" class="w-full h-40 object-cover rounded mb-4">` : ''}
-            <h3 class="font-semibold mb-2">${p.title}</h3>
-            <p class="text-sm text-slate-300 mb-3">${p.description}</p>
-            <div class="flex flex-wrap gap-2 mb-4">
-              ${p.technologies.split(',').map(t=>`<span class="px-2 py-1 bg-slate-700 rounded text-xs">${t.trim()}</span>`).join('')}
-            </div>
-            <div class="flex gap-4 text-sm">
-              ${p.github ? `<a href="${p.github}" target="_blank" class="hover:text-pink-300">GitHub</a>` : ''}
-              ${p.demo ? `<a href="${p.demo}" target="_blank" class="hover:text-pink-300">Live</a>` : ''}
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  </section>` : '' }
-
-  <!-- Skills -->
-  ${ data.skills?.length ? `<section id="skills" class="py-20 bg-slate-900/80">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-2xl font-semibold mb-8">Skills</h2>
-      <div class="grid md:grid-cols-2 gap-6">
-        ${data.skills.map(s => `
-          <div>
-            <div class="flex justify-between mb-1">
-              <span>${s.skill}</span>
-              <span class="text-sm text-slate-400">${s.level}</span>
-            </div>
-            <div class="h-2 bg-slate-700 rounded">
-              <div class="bg-pink-300 h-2 rounded" style="width:${getSkillPercentage(s.level)}%"></div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  </section>` : '' }
-
-  <!-- Contact -->
-  <section id="contact" class="py-20 bg-slate-900/70">
-    <div class="max-w-6xl mx-auto px-6 text-center">
-      <h2 class="text-2xl font-semibold mb-4">Get in touch</h2>
-      <p class="text-slate-300 mb-6">Email me at <a href="mailto:${data.personal.email || 'contact@example.com'}" class="text-pink-300">${data.personal.email || 'contact@example.com'}</a></p>
-      <a href="mailto:${data.personal.email || 'contact@example.com'}" class="px-6 py-3 border border-pink-300 text-pink-300 rounded-lg hover:bg-pink-300 hover:text-slate-900 transition">Say Hello</a>
-    </div>
-  </section>
-
-  <footer class="py-10 text-center text-sm text-slate-500">© ${new Date().getFullYear()} ${data.personal.fullName || ''}</footer>
-
-  <script src="script.js"></script>
-</body>
-</html>`;
-
-  const css = `/* Aurora animated background */
-.aurora {
-  background: radial-gradient(circle at 20% 20%, rgba(255,0,128,0.4), transparent 60%),
-              radial-gradient(circle at 80% 30%, rgba(0,255,255,0.4), transparent 60%),
-              radial-gradient(circle at 50% 80%, rgba(255,255,0,0.4), transparent 60%);
-  background-size: 200% 200%;
-  animation: auroraMove 15s ease-in-out infinite alternate;
-  filter: blur(80px);
-}
-
-@keyframes auroraMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-html { scroll-behavior: smooth; }`;
-
-  const js = `gsap.registerPlugin(ScrollTrigger);
-gsap.utils.toArray('section').forEach(section => {
-  gsap.from(section, {
-    opacity: 0,
-    y: 50,
-    duration: 0.6,
-    scrollTrigger: { trigger: section, start: "top 80%" }
-  });
-});`;
-
-  return { html, css, js };
-}
-
-
-function generateHolographicTemplate() {
-  const data = portfolioData;
-
-  const html = `<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>${data.personal.fullName || "Portfolio"}${data.personal.title ? ' — ' + data.personal.title : ''}</title>
-
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- GSAP -->
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body class="relative text-white overflow-x-hidden">
-  <!-- Holographic animated background -->
-  <div class="holo-bg absolute inset-0 -z-10"></div>
-
-  <!-- Header -->
-  <header class="py-6 fixed w-full top-0 bg-white/10 backdrop-blur-lg border-b border-white/20 z-50">
-    <div class="max-w-6xl mx-auto px-6 flex justify-between items-center">
-      <h1 class="font-bold text-lg drop-shadow-lg">${data.personal.fullName || 'Your Name'}</h1>
-      <nav class="flex gap-6 text-sm">
-        <a href="#hero" class="hover:text-pink-300">Home</a>
-        <a href="#projects" class="hover:text-pink-300">Projects</a>
-        <a href="#skills" class="hover:text-pink-300">Skills</a>
-        <a href="#contact" class="hover:text-pink-300">Contact</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Hero -->
-  <section id="hero" class="min-h-screen flex items-center justify-center text-center px-6">
-    <div class="glass p-8 rounded-xl shadow-xl">
-      <h2 class="text-4xl md:text-6xl font-extrabold mb-4">${data.personal.fullName || 'Your Name'}</h2>
-      <p class="text-xl text-pink-200 mb-6">${data.personal.title || 'Creative Developer'}</p>
-      <p class="max-w-xl mx-auto text-slate-100">${data.personal.about || 'I create interactive experiences with modern web technologies.'}</p>
-    </div>
-  </section>
-
-  <!-- Projects -->
-  ${ data.projects?.length ? `<section id="projects" class="py-20">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-2xl font-semibold mb-8">Projects</h2>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        ${data.projects.map(p => `
-          <div class="glass p-4 rounded-xl shadow-lg hover:shadow-pink-500/30 transition">
-            ${p.image ? `<img src="${p.image}" class="w-full h-40 object-cover rounded mb-4">` : ''}
-            <h3 class="font-semibold mb-2">${p.title}</h3>
-            <p class="text-sm text-slate-200 mb-3">${p.description}</p>
-            <div class="flex flex-wrap gap-2 mb-4">
-              ${p.technologies.split(',').map(t=>`<span class="px-2 py-1 bg-white/10 rounded text-xs">${t.trim()}</span>`).join('')}
-            </div>
-            <div class="flex gap-4 text-sm">
-              ${p.github ? `<a href="${p.github}" target="_blank" class="hover:text-pink-300">GitHub</a>` : ''}
-              ${p.demo ? `<a href="${p.demo}" target="_blank" class="hover:text-pink-300">Live</a>` : ''}
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  </section>` : '' }
-
-  <!-- Skills -->
-  ${ data.skills?.length ? `<section id="skills" class="py-20">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-2xl font-semibold mb-8">Skills</h2>
-      <div class="grid md:grid-cols-2 gap-6">
-        ${data.skills.map(s => `
-          <div class="glass p-4 rounded-xl">
-            <div class="flex justify-between mb-1">
-              <span>${s.skill}</span>
-              <span class="text-sm text-slate-200">${s.level}</span>
-            </div>
-            <div class="h-2 bg-white/20 rounded">
-              <div class="bg-pink-300 h-2 rounded" style="width:${getSkillPercentage(s.level)}%"></div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  </section>` : '' }
-
-  <!-- Contact -->
-  <section id="contact" class="py-20 text-center">
-    <h2 class="text-2xl font-semibold mb-4">Get in touch</h2>
-    <p class="text-slate-200 mb-6">Email me at <a href="mailto:${data.personal.email || 'contact@example.com'}" class="text-pink-300">${data.personal.email || 'contact@example.com'}</a></p>
-    <a href="mailto:${data.personal.email || 'contact@example.com'}" class="px-6 py-3 border border-pink-300 text-pink-300 rounded-lg hover:bg-pink-300 hover:text-slate-900 transition">Say Hello</a>
-  </section>
-
-  <footer class="py-10 text-center text-sm text-slate-300">© ${new Date().getFullYear()} ${data.personal.fullName || ''}</footer>
-
-  <script src="script.js"></script>
-</body>
-</html>`;
-
-  const css = `/* Holographic shimmer background */
-.holo-bg {
-  background: linear-gradient(270deg, #ff8a8a, #ffdb6e, #8aff8a, #8affff, #8a8aff, #ff8aff);
-  background-size: 1200% 1200%;
-  animation: holoShift 20s ease infinite;
-  filter: blur(100px);
-}
-
-@keyframes holoShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Glass effect */
-.glass {
-  background: rgba(255,255,255,0.15);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.3);
-}
-
-html { scroll-behavior: smooth; }`;
-
-  const js = `gsap.registerPlugin(ScrollTrigger);
-gsap.utils.toArray('section').forEach(section => {
-  gsap.from(section, {
-    opacity: 0,
-    y: 50,
-    duration: 0.6,
-    scrollTrigger: { trigger: section, start: "top 80%" }
-  });
-});`;
-
-  return { html, css, js };
-}
-
-
-// Utility function for skill percentages
-function getSkillPercentage(level) {
-  switch (level.toLowerCase()) {
-    case "beginner":
-      return "25";
-    case "intermediate":
-      return "50";
-    case "advanced":
-      return "75";
-    case "expert":
-      return "90";
-    default:
-      return "50";
-  }
 }
 
 // Toast notification system
@@ -3524,10 +2240,8 @@ function showToast(message, type = "success") {
   if (toast && messageEl) {
     messageEl.textContent = message;
 
-    // Remove existing color classes
     toast.className = toast.className.replace(/bg-\w+-\d+/g, "");
 
-    // Add color based on type
     if (type === "error") {
       toast.classList.add("bg-red-600");
     } else if (type === "info") {
@@ -3536,7 +2250,6 @@ function showToast(message, type = "success") {
       toast.classList.add("bg-green-600");
     }
 
-    // Show toast
     gsap.to(toast, {
       x: 0,
       duration: 0.5,
@@ -3546,7 +2259,6 @@ function showToast(message, type = "success") {
       },
     });
 
-    // Hide toast after 3 seconds
     setTimeout(() => {
       gsap.to(toast, {
         x: "100%",
@@ -3578,6 +2290,4 @@ window.previewPortfolio = previewPortfolio;
 window.downloadPortfolio = downloadPortfolio;
 window.startOver = startOver;
 
-console.log(
-  "🎉 Portfolio Generator fully loaded with enhanced button handling!"
-);
+console.log("🎉 Portfolio Generator fully loaded and production ready!");
